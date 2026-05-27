@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Seal — EV Calc</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Sarabun:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --accent: #00d4ff;
+    --accent2: #00ff9d;
+    --accent3: #ff6b35;
+    --warn: #ffd60a;
+    --text: #e2e8f0;
+    --text-dim: #64748b;
+    --text-mid: #94a3b8;
+    --tab-h: 64px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sarabun', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #0d1b2e 0%, #0a0e1a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo-badge {
+    background: var(--accent);
+    color: #000;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+  }
+  header h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 1px;
+  }
+  .header-sub {
+    margin-left: auto;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  #clock {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    margin-left: auto;
+  }
+
+  /* ── BOTTOM NAV ── */
+  nav {
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    height: var(--tab-h);
+    background: #0d1420;
+    border-top: 1px solid var(--border);
+    display: flex;
+    z-index: 100;
+  }
+  nav button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-family: 'Sarabun', sans-serif;
+    font-size: 11px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  nav button .nav-icon { font-size: 22px; line-height: 1; }
+  nav button.active {
+    color: var(--accent);
+  }
+  nav button.active::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 20%; right: 20%;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 0 0 4px 4px;
+  }
+
+  /* ── CONTENT ── */
+  main {
+    padding: 16px 16px calc(var(--tab-h) + 16px);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  /* ── SLIDER ── */
+  .slider-row {
+    margin-bottom: 16px;
+  }
+  .slider-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .slider-label span { font-size: 13px; color: var(--text-mid); }
+  .slider-val {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 18px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  input[type=range] {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    background: var(--border);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    cursor: pointer;
+  }
+  input[type=range].green::-webkit-slider-thumb { background: var(--accent2); box-shadow: 0 0 8px var(--accent2); }
+  input[type=range].orange::-webkit-slider-thumb { background: var(--accent3); box-shadow: 0 0 8px var(--accent3); }
+  input[type=range].yellow::-webkit-slider-thumb { background: var(--warn); box-shadow: 0 0 8px var(--warn); }
+
+  /* ── BIG NUMBER ── */
+  .big-result {
+    text-align: center;
+    padding: 20px 0 12px;
+  }
+  .big-num {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--accent2);
+    line-height: 1;
+    text-shadow: 0 0 30px rgba(0,255,157,0.3);
+  }
+  .big-unit {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* ── TABLE ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    text-align: right;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase;
+  }
+  th:first-child { text-align: left; }
+  td {
+    padding: 8px 8px;
+    border-bottom: 1px solid rgba(30,45,69,0.5);
+    text-align: right;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--text-mid);
+  }
+  td:first-child {
+    text-align: left;
+    color: var(--text-dim);
+    font-family: 'Sarabun', sans-serif;
+  }
+  tr.highlight td { color: var(--accent); background: rgba(0,212,255,0.05); }
+  tr.highlight td:first-child { color: var(--accent); }
+
+  /* ── OUTPUT ROW ── */
+  .out-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .out-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .out-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .out-val {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    color: var(--accent);
+  }
+  .out-val.green { color: var(--accent2); }
+  .out-val.orange { color: var(--accent3); }
+  .out-val.yellow { color: var(--warn); }
+
+  /* ── GANTT ── */
+  .gantt-wrap { overflow-x: auto; padding-bottom: 4px; }
+  .gantt-chart { min-width: 340px; }
+  .gantt-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+  .gantt-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    width: 38px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .gantt-bar-wrap {
+    flex: 1;
+    height: 28px;
+    background: var(--surface2);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .gantt-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: #000;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: width 0.5s ease;
+  }
+  .gantt-info {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    width: 90px;
+    flex-shrink: 0;
+    text-align: right;
+    line-height: 1.4;
+  }
+  .gantt-axis {
+    display: flex;
+    margin-left: 46px;
+    margin-right: 98px;
+    margin-bottom: 6px;
+    justify-content: space-between;
+  }
+  .gantt-tick {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+  }
+
+  /* ── BATTERY BAR ── */
+  .bat-bar-wrap {
+    height: 20px;
+    background: var(--surface2);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 8px 0 4px;
+    border: 1px solid var(--border);
+  }
+  .bat-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.3s;
+    background: linear-gradient(90deg, #00d4ff, #00ff9d);
+  }
+
+  /* ── SEGMENT PILLS ── */
+  .seg-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .seg-pill {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: all 0.15s;
+  }
+  .seg-pill.active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 12px 0;
+  }
+
+  .note {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    line-height: 1.6;
+  }
+
+  /* ── BATTERY SOURCE BADGE ── */
+  .bat-source {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 4px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .bat-source.live {
+    background: rgba(0,255,157,0.15);
+    color: var(--accent2);
+    border: 1px solid rgba(0,255,157,0.3);
+  }
+  .bat-source.manual {
+    background: rgba(100,116,139,0.15);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+
+  /* ── CONFIRM BUTTON ── */
+  .btn-confirm {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #00d4ff22, #00d4ff11);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    color: var(--accent);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+  }
+  .btn-confirm:active {
+    background: linear-gradient(135deg, #00d4ff44, #00d4ff22);
+    transform: scale(0.98);
+  }
+  .btn-confirm.started {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: linear-gradient(135deg, #00ff9d22, #00ff9d11);
+  }
+
+  /* ── FINISH TIME BOX ── */
+  .finish-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    display: none;
+  }
+  .finish-box.show { display: block; }
+  .finish-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .finish-time {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 52px;
+    font-weight: 700;
+    color: var(--accent2);
+    line-height: 1;
+    text-shadow: 0 0 24px rgba(0,255,157,0.4);
+  }
+  .finish-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="logo-badge">BYD</span>
+  <h1>Seal — EV Calc</h1>
+  <button id="lang-btn" onclick="toggleLang()" style="margin-left:auto;background:var(--surface2);border:1px solid var(--border);color:var(--text-mid);font-family:'Share Tech Mono',monospace;font-size:12px;padding:4px 10px;border-radius:6px;cursor:pointer;letter-spacing:1px">TH</button>
+  <span id="clock" style="margin-left:8px">--:--:--</span>
+</header>
+
+<main>
+  <!-- ══ TAB 1: ระยะทาง ══ -->
+  <div class="tab-content active" id="tab1">
+
+    <div class="card">
+      <div class="card-title" data-i18n="t1_bat_title">แบตเตอรี่ปัจจุบัน</div>
+      <div class="slider-row">
+        <div class="slider-label">
+          <span data-i18n="soc_label">State of Charge</span>
+          <span class="slider-val" id="t1-soc-val">70%</span>
+        </div>
+        <input type="range" id="t1-soc" min="0" max="100" value="70" class="green">
+        <div class="bat-bar-wrap">
+          <div class="bat-bar-fill" id="t1-bat-bar" style="width:70%"></div>
+        </div>
+        <span class="bat-source manual" id="t1-bat-source" data-i18n="manual_label">✏️ กรอกเอง</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="t1_cons_title">อัตราการใช้พลังงาน</div>
+      <div class="slider-row">
+        <div class="slider-label">
+          <span data-i18n="cons_label">Consumption</span>
+          <span class="slider-val" id="t1-cons-val">20 kWh/100km</span>        </div>
+        <input type="range" id="t1-cons" min="10" max="24" value="20" step="1">
+
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="big-result">
+        <div class="big-num" id="t1-range">—</div>
+        <div class="big-unit" data-i18n="km_unit">กิโลเมตร</div>
+      </div>
+      <p class="note" style="text-align:center">82.56 kWh usable · BYD Seal AWD</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">SOC <span id="t1-soc-ref">70</span>% — <span data-i18n="t1_table_title">ตารางเปรียบเทียบ</span></div>
+      <table id="t1-table">
+        <thead>
+          <tr>
+            <th data-i18n="th_cons">อัตราใช้พลังงาน</th>
+            <th data-i18n="th_range">ระยะทาง</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="t1_dest_title">จุดหมาย</div>
+      <div class="seg-row" id="t1-dest-presets">
+        <button class="seg-pill" data-km="50">50 <span data-i18n="km_short">กม.</span></button>
+        <button class="seg-pill" data-km="100">100 <span data-i18n="km_short">กม.</span></button>
+        <button class="seg-pill" data-km="150">150 <span data-i18n="km_short">กม.</span></button>
+        <button class="seg-pill" data-km="200">200 <span data-i18n="km_short">กม.</span></button>
+      </div>
+      <div class="slider-row">
+        <div class="slider-label">
+          <span data-i18n="distance_label">ระยะทาง</span>
+          <span class="slider-val" id="t1-dest-val">100 <span data-i18n="km_short">กม.</span></span>
+        </div>
+        <input type="range" id="t1-dest" min="0" max="500" value="100" step="5">
+      </div>
+      <div id="t1-dest-result" style="margin-top:8px"></div>
+    </div>
+
+  </div>
+
+  <!-- ══ TAB 2: DC Charge ══ -->
+  <div class="tab-content" id="tab2">
+
+    <div class="card">
+      <div class="card-title" data-i18n="t2_settings_title">ตั้งค่าการชาร์จ DC</div>
+
+      <div class="slider-row">
+        <div class="slider-label">
+          <span data-i18n="soc_start_label">SOC เริ่มต้น</span>
+          <span class="slider-val" id="t2-start-val">25%</span>
+        </div>
+        <input type="range" id="t2-start" min="0" max="99" value="25">
+        <span class="bat-source manual" id="t2-bat-source" data-i18n="manual_label">✏️ กรอกเอง</span>
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-label">
+          <span data-i18n="soc_target_label">SOC เป้าหมาย</span>
+          <span class="slider-val" id="t2-end-val">85%</span>
+        </div>
+        <input type="range" id="t2-end" min="1" max="100" value="85" class="green">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-label">
+          <span data-i18n="charger_label">กำลัง Charger</span>
+          <span class="slider-val" id="t2-charger-val">120 kW</span>
+        </div>
+        <input type="range" id="t2-charger" min="30" max="150" value="120" step="10" class="orange">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="out-grid">
+        <div class="out-box">
+          <div class="out-label" data-i18n="time_label">เวลา</div>
+          <div class="out-val" id="t2-time">—</div>
+        </div>
+        <div class="out-box">
+          <div class="out-label" data-i18n="energy_label">พลังงาน</div>
+          <div class="out-val green" id="t2-kwh">—</div>
+        </div>
+        <div class="out-box">
+          <div class="out-label" data-i18n="avg_label">เฉลี่ย</div>
+          <div class="out-val orange" id="t2-avg">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="t2_confirm_title">เริ่มชาร์จเดี๋ยวนี้</div>
+      <button class="btn-confirm" id="t2-start-btn" onclick="confirmDCStart()" data-i18n-btn="confirm_btn">
+        ▶ เริ่มชาร์จเดี๋ยวนี้
+      </button>
+      <div class="finish-box" id="t2-finish-box">
+        <div class="finish-label" data-i18n="finish_at_label">คาดว่าจะเสร็จเวลา</div>
+        <div class="finish-time" id="t2-finish-time">—</div>
+        <div class="finish-sub" id="t2-finish-sub">—</div>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+          <div class="finish-label" data-i18n="remaining_label">เหลืออีก</div>
+          <div id="t2-countdown" style="font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;color:var(--warn);text-shadow:0 0 20px rgba(255,214,10,0.3)">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Charging Curve — BYD Seal AWD</div>
+      <canvas id="curveCanvas" width="560" height="140" style="width:100%;height:140px;display:block;"></canvas>
+      <p class="note" data-i18n="curve_note">เส้นสีเทา = curve จริง · เส้นสีส้ม = cap ที่ charger · ช่วงสีฟ้า = SOC ที่เลือก</p>
+    </div>
+
+  </div>
+
+  <!-- ══ TAB 3: AC Charge ══ -->
+  <div class="tab-content" id="tab3">
+
+    <div class="card">
+      <div class="card-title" data-i18n="t3_settings_title">ตั้งค่าการชาร์จ AC</div>
+
+      <div class="slider-row">
+        <div class="slider-label">
+          <span data-i18n="soc_current_label">SOC ปัจจุบัน</span>
+          <span class="slider-val" id="t3-soc-val">25%</span>
+        </div>
+        <input type="range" id="t3-soc" min="0" max="99" value="25" class="green">
+        <div class="bat-bar-wrap">
+          <div class="bat-bar-fill" id="t3-bat-bar" style="width:25%"></div>
+        </div>
+        <span class="bat-source manual" id="t3-bat-source" data-i18n="manual_label">✏️ กรอกเอง</span>
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-label">
+          <span data-i18n="elec_rate_label">ค่าไฟ</span>
+          <span class="slider-val yellow" id="t3-rate-val">9 ฿/หน่วย</span>
+        </div>
+        <input type="range" id="t3-rate" min="8" max="14" value="9" step="1" class="yellow">
+      </div>
+      <p class="note" data-i18n="t3_note">ชาร์จจนเต็ม 100% · หักค่าสูญเสีย 10% (charger loss)</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="t3_recommend_title">แนะนำ — เลือก Amp ที่เหมาะสม</div>
+      <table id="t3-table">
+        <thead>
+          <tr>
+            <th>Amp</th>
+            <th data-i18n="th_power">กำลัง</th>
+            <th data-i18n="th_finish">เสร็จเวลา</th>
+            <th data-i18n="th_duration">ใช้เวลา</th>
+            <th data-i18n="th_cost">ค่าไฟ</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="note" style="margin-top:10px" id="t3-start-note"></p>
+    </div>
+
+  </div>
+</main>
+
+<!-- BOTTOM NAV -->
+<nav>
+  <button class="active" onclick="switchTab(1,this)">
+    <span class="nav-icon">🛣️</span><span data-i18n="nav_range">ระยะทาง</span>
+  </button>
+  <button onclick="switchTab(2,this)">
+    <span class="nav-icon">⚡</span><span data-i18n="nav_dc">DC ชาร์จ</span>
+  </button>
+  <button onclick="switchTab(3,this)">
+    <span class="nav-icon">🔌</span><span data-i18n="nav_ac">AC ชาร์จ</span>
+  </button>
+</nav>
+
+<script>
+// ══ i18n ══
+const LANG = {
+  th: {
+    nav_range:'ระยะทาง', nav_dc:'DC ชาร์จ', nav_ac:'AC ชาร์จ',
+    t1_bat_title:'แบตเตอรี่ปัจจุบัน', soc_label:'State of Charge',
+    manual_label:'✏️ กรอกเอง', live_label:'🔋 จากอุปกรณ์',
+    t1_cons_title:'อัตราการใช้พลังงาน', cons_label:'Consumption',
+    km_unit:'กิโลเมตร', km_short:'กม.',
+    t1_table_title:'ตารางเปรียบเทียบ',
+    th_cons:'อัตราใช้พลังงาน', th_range:'ระยะทาง',
+    t1_dest_title:'จุดหมาย', distance_label:'ระยะทาง',
+    t2_settings_title:'ตั้งค่าการชาร์จ DC',
+    soc_start_label:'SOC เริ่มต้น', soc_target_label:'SOC เป้าหมาย',
+    charger_label:'กำลัง Charger',
+    time_label:'เวลา', energy_label:'พลังงาน', avg_label:'เฉลี่ย',
+    t2_confirm_title:'เริ่มชาร์จเดี๋ยวนี้',
+    confirm_btn:'▶ เริ่มชาร์จเดี๋ยวนี้',
+    charging_btn:'⏹ กำลังชาร์จอยู่... (กดเพื่อรีเซ็ต)',
+    finish_at_label:'คาดว่าจะเสร็จเวลา', remaining_label:'เหลืออีก',
+    done_label:'✅ ครบเวลาที่ประมาณไว้',
+    curve_note:'เส้นสีเทา = curve จริง · เส้นสีส้ม = cap ที่ charger · ช่วงสีฟ้า = SOC ที่เลือก',
+    t3_settings_title:'ตั้งค่าการชาร์จ AC',
+    soc_current_label:'SOC ปัจจุบัน', elec_rate_label:'ค่าไฟ',
+    t3_note:'ชาร์จจนเต็ม 100% · หักค่าสูญเสีย 10% (charger loss)',
+    t3_recommend_title:'แนะนำ — เลือก Amp ที่เหมาะสม',
+    th_power:'กำลัง', th_finish:'เสร็จเวลา', th_duration:'ใช้เวลา', th_cost:'ค่าไฟ',
+    dest_at:'แบตเมื่อถึงที่หมาย', bat_ok:'✅ แบตพอ', bat_short:'แบตไม่พอ',
+    remain_km:'เหลือระยะ', used_kwh:'ใช้ไป', lack_km:'ขาดอีก',
+    badge_morning:'✓ เสร็จตอนเช้า', badge_late:'⚡ เสร็จดึก',
+    badge_slow:'⚠ เสร็จสาย', badge_veryslow:'— เสร็จสายมาก',
+    start_note:'เริ่มชาร์จ', start_note2:'น. · ชาร์จจาก',
+    baht_unit:'฿/หน่วย', min_unit:'นาที',
+    dc_start:'เริ่ม', dc_duration:'ใช้เวลา',
+  },
+  en: {
+    nav_range:'Range', nav_dc:'DC Charge', nav_ac:'AC Charge',
+    t1_bat_title:'Current Battery', soc_label:'State of Charge',
+    manual_label:'✏️ Manual', live_label:'🔋 From Device',
+    t1_cons_title:'Energy Consumption', cons_label:'Consumption',
+    km_unit:'Kilometers', km_short:'km',
+    t1_table_title:'Comparison Table',
+    th_cons:'Consumption', th_range:'Range',
+    t1_dest_title:'Destination', distance_label:'Distance',
+    t2_settings_title:'DC Charging Settings',
+    soc_start_label:'SOC Start', soc_target_label:'SOC Target',
+    charger_label:'Charger Power',
+    time_label:'Time', energy_label:'Energy', avg_label:'Avg',
+    t2_confirm_title:'Start Charging Now',
+    confirm_btn:'▶ Start Charging Now',
+    charging_btn:'⏹ Charging... (tap to reset)',
+    finish_at_label:'Estimated Finish Time', remaining_label:'Remaining',
+    done_label:'✅ Time is up!',
+    curve_note:'Gray = actual curve · Orange = charger cap · Blue = selected SOC range',
+    t3_settings_title:'AC Charging Settings',
+    soc_current_label:'Current SOC', elec_rate_label:'Electricity Rate',
+    t3_note:'Charge to 100% · 10% charger loss applied',
+    t3_recommend_title:'Recommendation — Choose Amp',
+    th_power:'Power', th_finish:'Finish', th_duration:'Duration', th_cost:'Cost',
+    dest_at:'Battery at Destination', bat_ok:'✅ Sufficient', bat_short:'Insufficient',
+    remain_km:'Range left', used_kwh:'Used', lack_km:'Short by',
+    badge_morning:'✓ Done by morning', badge_late:'⚡ Done at night',
+    badge_slow:'⚠ Done late', badge_veryslow:'— Very late',
+    start_note:'Started at', start_note2:'· Charging from',
+    baht_unit:'฿/unit', min_unit:'min',
+    dc_start:'Started', dc_duration:'Duration',
+  }
+};
+
+let currentLang = 'th';
+
+function toggleLang() {
+  currentLang = currentLang === 'th' ? 'en' : 'th';
+  const btn = document.getElementById('lang-btn');
+  btn.textContent = currentLang === 'th' ? 'TH' : 'EN';
+  btn.style.color = currentLang === 'en' ? 'var(--accent)' : 'var(--text-mid)';
+  btn.style.borderColor = currentLang === 'en' ? 'var(--accent)' : 'var(--border)';
+  applyLang();
+  updateTab1(); updateTab2(); updateTab3();
+}
+
+function t(key) { return LANG[currentLang][key] || key; }
+
+function applyLang() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  // bat source badges (live ones)
+  ['t1-bat-source','t2-bat-source','t3-bat-source'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el.classList.contains('live')) el.textContent = t('live_label');
+    else el.textContent = t('manual_label');
+  });
+  // confirm button state
+  const btn = document.getElementById('t2-start-btn');
+  if(dcStartTime) btn.textContent = t('charging_btn');
+  else btn.textContent = t('confirm_btn');
+}
+
+// ══ CHARGING CURVE DATA ══
+const CURVE = [
+  60,70,80,90,100,110,111,114,114,120, // 0-9
+  142,144,145,146,147,147,150,150,150,150, // 10-19
+  151,151,151,151,150,151,150,150,150,150, // 20-29
+  150,150,149,149,149,149,148,148,148,148, // 30-39
+  148,147,147,147,144,104,98,99,92,86, // 40-49
+  86,88,88,88,88,88,88,88,88,88, // 50-59
+  88,88,88,83,61,62,64,65,69,70, // 60-69
+  70,71,75,78,78,80,80,80,80,80, // 70-79
+  80,80,80,80,80,42,44,44,44,44, // 80-89
+  44,44,44,44,45,45,45,46,46,19,19 // 90-100
+];
+const BATTERY_KWH = 82.56;
+
+// ══ CLOCK ══
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Mark as manual when user touches slider
+['t1-soc','t2-start','t3-soc'].forEach(id => {
+  document.getElementById(id).addEventListener('input', function() {
+    const map = {'t1-soc':'t1-bat-source','t2-start':'t2-bat-source','t3-soc':'t3-bat-source'};
+    const el = document.getElementById(map[id]);
+    el.textContent = t('manual_label');
+    el.className = 'bat-source manual';
+  });
+});
+
+// ══ DC CONFIRM START ══
+let dcStartTime = null;
+let dcTotalMs = 0;
+let dcCountdownInterval = null;
+
+function confirmDCStart() {
+  // toggle reset
+  if(dcStartTime) {
+    dcStartTime = null;
+    dcTotalMs = 0;
+    clearInterval(dcCountdownInterval);
+    const btn = document.getElementById('t2-start-btn');
+    btn.textContent = t('confirm_btn');
+    btn.classList.remove('started');
+    document.getElementById('t2-finish-box').classList.remove('show');
+    document.getElementById('t2-countdown').textContent = '—';
+    return;
+  }
+
+  dcStartTime = new Date();
+  const btn = document.getElementById('t2-start-btn');
+  btn.textContent = t('charging_btn');
+  btn.classList.add('started');
+
+  updateDCFinish();
+
+  // countdown every second
+  if(dcCountdownInterval) clearInterval(dcCountdownInterval);
+  dcCountdownInterval = setInterval(() => {
+    if(!dcStartTime) return;
+    const elapsed = (Date.now() - dcStartTime.getTime()) / 1000;
+    const remaining = (dcTotalMs / 1000) - elapsed;
+    const cd = document.getElementById('t2-countdown');
+    if(remaining <= 0) {
+      cd.textContent = t('done_label');
+      cd.style.color = 'var(--accent2)';
+      cd.style.fontSize = '20px';
+      clearInterval(dcCountdownInterval);
+    } else {
+      const h = Math.floor(remaining / 3600);
+      const m = Math.floor((remaining % 3600) / 60);
+      const s = Math.floor(remaining % 60);
+      cd.style.fontSize = '36px';
+      cd.style.color = remaining < 300 ? 'var(--accent2)' : 'var(--warn)';
+      cd.textContent = (h > 0 ? h + 'h ' : '') +
+        m.toString().padStart(2,'0') + 'm ' +
+        s.toString().padStart(2,'0') + 's';
+    }
+  }, 1000);
+}
+
+function updateDCFinish() {
+  if(!dcStartTime) return;
+  const start = +document.getElementById('t2-start').value;
+  const end = +document.getElementById('t2-end').value;
+  const charger = +document.getElementById('t2-charger').value;
+  const result = calcDCCharge(start, end, charger);
+  dcTotalMs = result.minutes * 60000;
+  const finishTime = new Date(dcStartTime.getTime() + dcTotalMs);
+
+  document.getElementById('t2-finish-box').classList.add('show');
+  document.getElementById('t2-finish-time').textContent = fmt24(finishTime);
+  document.getElementById('t2-finish-sub').textContent =
+    t('dc_start') + ' ' + fmt24(dcStartTime) + ' · ' + t('dc_duration') + ' ' + fmtTime(result.minutes) +
+    ' · ' + start + '% → ' + end + '%';
+}
+
+// reset confirm if slider changes
+['t2-start','t2-end','t2-charger'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    if(dcStartTime) updateDCFinish();
+  });
+});
+function switchTab(n, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab'+n).classList.add('active');
+  btn.classList.add('active');
+  if(n===2) drawCurve();
+  if(n===3) renderGantt();
+}
+
+// ══════════════════════════════════
+// TAB 1 — RANGE CALCULATOR
+// ══════════════════════════════════
+const PRESET_CONS = [10,12,14,16,18,20,22,24];
+
+function calcRange(socPct, consKwh) {
+  const energy = (socPct / 100) * BATTERY_KWH;
+  return (energy / consKwh) * 100;
+}
+
+function updateTab1() {
+  const soc = +document.getElementById('t1-soc').value;
+  const cons = +document.getElementById('t1-cons').value;
+
+  document.getElementById('t1-soc-val').textContent = soc + '%';
+  document.getElementById('t1-cons-val').textContent = cons + ' kWh/100km';
+  document.getElementById('t1-soc-ref').textContent = soc;
+
+  const batBar = document.getElementById('t1-bat-bar');
+  batBar.style.width = soc + '%';
+  batBar.style.background = soc > 50
+    ? 'linear-gradient(90deg,#00d4ff,#00ff9d)'
+    : soc > 20
+    ? 'linear-gradient(90deg,#ffd60a,#ff9d00)'
+    : 'linear-gradient(90deg,#ff4444,#ff6b35)';
+
+  const range = calcRange(soc, cons);
+  document.getElementById('t1-range').textContent = Math.round(range);
+
+  // table
+  const tbody = document.querySelector('#t1-table tbody');
+  tbody.innerHTML = '';
+  PRESET_CONS.forEach(c => {
+    const r = calcRange(soc, c);
+    const tr = document.createElement('tr');
+    if(c === cons) tr.classList.add('highlight');
+    tr.innerHTML = `<td>${c} kWh/100km</td><td>${Math.round(r)} km</td>`;
+    tbody.appendChild(tr);
+  });
+
+  // destination
+  updateDestination();
+}
+
+function updateDestination() {
+  const soc = +document.getElementById('t1-soc').value;
+  const cons = +document.getElementById('t1-cons').value;
+  const dest = +document.getElementById('t1-dest').value;
+  document.getElementById('t1-dest-val').textContent = dest + ' ' + t('km_short');
+
+  const maxRange = calcRange(soc, cons);
+  const usedKwh = (dest / 100) * cons;
+  const usedSocPct = (usedKwh / BATTERY_KWH) * 100;
+  const remainSoc = soc - usedSocPct;
+  const remainKm = maxRange - dest;
+  const el = document.getElementById('t1-dest-result');
+
+  if(dest === 0) { el.innerHTML = ''; return; }
+
+  if(remainSoc >= 0) {
+    const color = remainSoc > 20 ? 'var(--accent2)' : 'var(--warn)';
+    el.innerHTML = `
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+        <div style="font-size:11px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">${t('dest_at')}</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:48px;font-weight:700;color:${color};line-height:1">${Math.round(remainSoc)}%</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);margin-top:6px">
+          ${t('bat_ok')} · ${t('remain_km')} ${Math.round(remainKm)} ${t('km_short')} · ${t('used_kwh')} ${usedKwh.toFixed(1)} kWh
+        </div>
+      </div>`;
+  } else {
+    const shortage = Math.abs(remainKm);
+    el.innerHTML = `
+      <div style="background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.3);border-radius:10px;padding:14px;text-align:center">
+        <div style="font-size:11px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">${t('bat_short')}</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:48px;font-weight:700;color:#ff4444;line-height:1">−${Math.round(shortage)} ${t('km_short')}</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);margin-top:6px">
+          ⚠️ ${t('lack_km')} ${Math.round(shortage)} ${t('km_short')} · ${t('used_kwh')} ${usedKwh.toFixed(1)} kWh
+        </div>
+      </div>`;
+  }
+}
+
+// preset buttons
+document.querySelectorAll('#t1-dest-presets .seg-pill').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('#t1-dest-presets .seg-pill').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('t1-dest').value = this.dataset.km;
+    updateDestination();
+  });
+});
+document.getElementById('t1-dest').addEventListener('input', function() {
+  document.querySelectorAll('#t1-dest-presets .seg-pill').forEach(b => b.classList.remove('active'));
+  updateDestination();
+});
+
+document.getElementById('t1-soc').addEventListener('input', updateTab1);
+document.getElementById('t1-cons').addEventListener('input', updateTab1);
+updateTab1();
+
+// ══════════════════════════════════
+// TAB 2 — DC CHARGING
+// ══════════════════════════════════
+// Time table from curve (seconds from 0%)
+const CURVE_TIME = [
+  0,49,91,129,162,193,222,250,278,305,
+  330,352,374,396,418,440,461,482,504,525,
+  546,567,589,610,631,652,673,695,716,737,
+  759,780,801,823,844,867,889,909,930,952,
+  973,995,1017,1038,1086,1118,1150,1184,1219,1257,
+  1293,1330,1370,1366,1390,1426,1457,1526,1574,1620,
+  1680,1716,1753,1790,1834,1886,1937,1986,2034,2080,
+  2126,2171,2215,2256,2297,2338,2378,2418,2398,2477,
+  2477,2517,2557,2597,2637,2689,2764,2836,2909,2981,
+  3054,3127,3199,3272,3343,3414,3485,3556,3625,3723,3891
+];
+
+function calcDCCharge(startSoc, endSoc, chargerKw) {
+  if(startSoc >= endSoc) return {minutes:0, kwh:0, avgKw:0};
+  let totalSec = 0;
+  let totalKwh = 0;
+  for(let soc = startSoc; soc < endSoc; soc++) {
+    const curveKw = CURVE[soc];
+    const effectiveKw = Math.min(curveKw, chargerKw);
+    // energy for 1% of 82.56 kWh
+    const segKwh = BATTERY_KWH * 0.01;
+    const segSec = (segKwh / effectiveKw) * 3600;
+    totalSec += segSec;
+    totalKwh += segKwh;
+  }
+  return {
+    minutes: totalSec / 60,
+    kwh: totalKwh,
+    avgKw: totalKwh / (totalSec / 3600)
+  };
+}
+
+function fmtTime(minutes) {
+  const m = Math.round(minutes);
+  const h = Math.floor(m/60);
+  const mm = m % 60;
+  if(h > 0) return h + 'h ' + mm + 'm';
+  return mm + ' นาที';
+}
+
+function fmt24(date) {
+  const h = date.getHours().toString().padStart(2,'0');
+  const m = date.getMinutes().toString().padStart(2,'0');
+  return h + ':' + m;
+}
+
+function updateTab2() {
+  let start = +document.getElementById('t2-start').value;
+  let end = +document.getElementById('t2-end').value;
+  const charger = +document.getElementById('t2-charger').value;
+
+  if(start >= end) {
+    if(start >= 99) start = end - 1;
+    else end = Math.min(100, start + 1);
+    document.getElementById('t2-start').value = start;
+    document.getElementById('t2-end').value = end;
+  }
+
+  document.getElementById('t2-start-val').textContent = start + '%';
+  document.getElementById('t2-end-val').textContent = end + '%';
+  document.getElementById('t2-charger-val').textContent = charger + ' kW';
+
+  const result = calcDCCharge(start, end, charger);
+  document.getElementById('t2-time').textContent = fmtTime(result.minutes);
+  document.getElementById('t2-kwh').textContent = result.kwh.toFixed(1) + ' kWh';
+  document.getElementById('t2-avg').textContent = Math.round(result.avgKw) + ' kW';
+
+  drawCurve();
+}
+
+function drawCurve() {
+  const canvas = document.getElementById('curveCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const startSoc = +document.getElementById('t2-start').value;
+  const endSoc = +document.getElementById('t2-end').value;
+  const chargerKw = +document.getElementById('t2-charger').value;
+
+  const pad = {l:36, r:10, t:10, b:24};
+  const cw = W - pad.l - pad.r;
+  const ch = H - pad.t - pad.b;
+  const maxKw = 160;
+
+  function xPos(soc) { return pad.l + (soc/100)*cw; }
+  function yPos(kw) { return pad.t + ch - (kw/maxKw)*ch; }
+
+  // highlight range
+  ctx.fillStyle = 'rgba(0,212,255,0.08)';
+  ctx.fillRect(xPos(startSoc), pad.t, xPos(endSoc)-xPos(startSoc), ch);
+
+  // grid
+  ctx.strokeStyle = '#1e2d45';
+  ctx.lineWidth = 1;
+  [50,100,150].forEach(kw => {
+    ctx.beginPath();
+    ctx.moveTo(pad.l, yPos(kw));
+    ctx.lineTo(pad.l+cw, yPos(kw));
+    ctx.stroke();
+    ctx.fillStyle = '#64748b';
+    ctx.font = '9px Share Tech Mono';
+    ctx.fillText(kw+'kW', 0, yPos(kw)+3);
+  });
+
+  // x axis labels
+  [0,25,50,75,100].forEach(soc => {
+    ctx.fillStyle = '#64748b';
+    ctx.font = '9px Share Tech Mono';
+    ctx.textAlign = 'center';
+    ctx.fillText(soc+'%', xPos(soc), H-6);
+  });
+  ctx.textAlign = 'left';
+
+  // charger cap line
+  ctx.strokeStyle = 'rgba(255,107,53,0.6)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4,3]);
+  ctx.beginPath();
+  ctx.moveTo(pad.l, yPos(chargerKw));
+  ctx.lineTo(pad.l+cw, yPos(chargerKw));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // curve actual
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  CURVE.forEach((kw,i) => {
+    const x = xPos(i);
+    const y = yPos(kw);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // effective curve (capped)
+  ctx.strokeStyle = '#00d4ff';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  CURVE.forEach((kw,i) => {
+    const effKw = Math.min(kw, chargerKw);
+    const x = xPos(i);
+    const y = yPos(effKw);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // SOC markers
+  [startSoc, endSoc].forEach((soc,idx) => {
+    ctx.strokeStyle = idx===0 ? '#ffd60a' : '#00ff9d';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(xPos(soc), pad.t);
+    ctx.lineTo(xPos(soc), pad.t+ch);
+    ctx.stroke();
+  });
+}
+
+['t2-start','t2-end','t2-charger'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateTab2);
+});
+updateTab2();
+
+// ══════════════════════════════════
+// TAB 3 — AC CHARGING
+// ══════════════════════════════════
+function calcACPower(amp) {
+  return amp * 220 * 0.90 / 1000; // kW after 10% loss
+}
+
+function calcACCharge(socStart, socEnd, amp) {
+  const kw = calcACPower(amp);
+  const neededKwh = ((socEnd - socStart) / 100) * BATTERY_KWH;
+  const hours = neededKwh / kw;
+  return { hours, kwh: neededKwh, kw };
+}
+
+function addHours(date, h) {
+  return new Date(date.getTime() + h * 3600000);
+}
+
+function fmtDuration(hours) {
+  const totalMin = Math.round(hours * 60);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  if(h > 0) return h + 'h ' + m + 'm';
+  return m + ' ' + t('min_unit');
+}
+
+function getBadge(amp, finishHour) {
+  if(finishHour >= 5 && finishHour <= 7) return {text: t('badge_morning'), color:'var(--accent2)'};
+  if(finishHour < 5) return {text: t('badge_late'), color:'var(--accent)'};
+  if(finishHour > 7 && finishHour <= 9) return {text: t('badge_slow'), color:'var(--warn)'};
+  return {text: t('badge_veryslow'), color:'var(--text-dim)'};
+}
+
+function fmt24WithDay(finishDate, startDate) {
+  const time = fmt24(finishDate);
+  const startDay = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+  const finishDay = new Date(finishDate.getFullYear(), finishDate.getMonth(), finishDate.getDate());
+  const dayDiff = Math.round((finishDay - startDay) / 86400000);
+  if(dayDiff <= 0) return time;
+  const sup = ['¹','²','³'][dayDiff-1] || '+'+dayDiff;
+  return `${time}<sup style="font-size:10px;color:var(--warn)">+${sup}</sup>`;
+}
+
+function updateTab3() {
+  const soc = +document.getElementById('t3-soc').value;
+  const rate = +document.getElementById('t3-rate').value;
+  const now = new Date();
+
+  document.getElementById('t3-soc-val').textContent = soc + '%';
+  document.getElementById('t3-rate-val').textContent = rate + ' ' + t('baht_unit');
+  document.getElementById('t3-start-note').textContent =
+    t('start_note') + ' ' + fmt24(now) + ' · ' + t('start_note2') + ' ' + soc + '% → 100%';
+
+  const batBar = document.getElementById('t3-bat-bar');
+  batBar.style.width = soc + '%';
+  batBar.style.background = soc > 50
+    ? 'linear-gradient(90deg,#00d4ff,#00ff9d)'
+    : soc > 20
+    ? 'linear-gradient(90deg,#ffd60a,#ff9d00)'
+    : 'linear-gradient(90deg,#ff4444,#ff6b35)';
+
+  const AMPS = [8, 10, 13, 16, 32];
+  const tbody = document.querySelector('#t3-table tbody');
+  tbody.innerHTML = '';
+
+  AMPS.forEach(amp => {
+    const res = calcACCharge(soc, 100, amp);
+    const finish = addHours(now, res.hours);
+    const cost = res.kwh * rate;
+    const badge = getBadge(amp, finish.getHours());
+    const kw = calcACPower(amp);
+    const finishDisplay = fmt24WithDay(finish, now);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="text-align:left;font-family:'Share Tech Mono',monospace;color:var(--accent)">${amp}A</td>
+      <td style="font-family:'Share Tech Mono',monospace">${kw.toFixed(1)} kW</td>
+      <td style="font-family:'Share Tech Mono',monospace;color:var(--accent2);font-size:15px">${finishDisplay}</td>
+      <td style="font-family:'Share Tech Mono',monospace">${fmtDuration(res.hours)}</td>
+      <td style="color:var(--warn);font-family:'Share Tech Mono',monospace">${Math.round(cost)}฿</td>
+    `;
+    tbody.appendChild(tr);
+
+    // badge row
+    const tr2 = document.createElement('tr');
+    tr2.innerHTML = `<td colspan="5" style="text-align:left;padding:2px 8px 10px;font-size:11px;color:${badge.color};border-bottom:1px solid var(--border)">${badge.text}</td>`;
+    tbody.appendChild(tr2);
+  });
+
+  renderGantt();
+}
+
+function renderGantt() {
+  const soc = +document.getElementById('t3-soc').value;
+  const rate = +document.getElementById('t3-rate').value;
+  const now = new Date();
+  const AMPS = [8, 10, 13, 16];
+  const COLORS = ['#00d4ff','#00ff9d','#ffd60a','#ff6b35'];
+  const SPAN_HOURS = 24;
+
+  // axis
+  const axis = document.getElementById('t3-axis');
+  axis.innerHTML = '';
+  for(let h = 0; h <= SPAN_HOURS; h += 4) {
+    const tick = document.createElement('span');
+    tick.className = 'gantt-tick';
+    const t = new Date(now.getTime() + h*3600000);
+    tick.textContent = t.getHours().toString().padStart(2,'0')+':00';
+    axis.appendChild(tick);
+  }
+
+  const gantt = document.getElementById('t3-gantt');
+  gantt.innerHTML = '';
+
+  AMPS.forEach((amp, i) => {
+    const res = calcACCharge(soc, 100, amp);
+    const widthPct = Math.min(100, (res.hours / SPAN_HOURS) * 100);
+    const finish = addHours(now, res.hours);
+    const cost = res.kwh * rate;
+
+    const row = document.createElement('div');
+    row.className = 'gantt-row';
+    row.innerHTML = `
+      <div class="gantt-label">${amp}A</div>
+      <div class="gantt-bar-wrap">
+        <div class="gantt-bar" style="width:${widthPct}%;background:${COLORS[i]}">
+          ${res.hours < 3 ? fmt24(finish) : ''}
+        </div>
+      </div>
+      <div class="gantt-info">
+        ${fmt24(finish)}<br>
+        <span style="color:var(--warn)">${Math.round(cost)}฿</span>
+      </div>
+    `;
+    gantt.appendChild(row);
+  });
+}
+
+document.getElementById('t3-soc').addEventListener('input', updateTab3);
+document.getElementById('t3-rate').addEventListener('input', updateTab3);
+updateTab3();
+</script>
+</body>
+</html>
