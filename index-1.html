@@ -634,7 +634,7 @@
         </div>
         <input type="range" id="t3-rate" min="8" max="14" value="9" step="1" class="yellow">
       </div>
-      <p class="note" data-i18n="t3_note">ชาร์จจนเต็ม 100% · หักค่าสูญเสีย 10% (charger loss)</p>
+      <p class="note" data-i18n="t3_note">ชาร์จจนเต็ม 100% · หักค่าสูญเสีย 11.5% (charger loss)</p>
     </div>
 
     <div class="card">
@@ -694,7 +694,7 @@ const LANG = {
     curve_note:'เส้นสีเทา = curve จริง · เส้นสีส้ม = cap ที่ charger · ช่วงสีฟ้า = SOC ที่เลือก',
     t3_settings_title:'ตั้งค่าการชาร์จ AC',
     soc_current_label:'SOC ปัจจุบัน', elec_rate_label:'ค่าไฟ',
-    t3_note:'ชาร์จจนเต็ม 100% · หักค่าสูญเสีย 10% (charger loss)',
+    t3_note:'ชาร์จจนเต็ม 100% · หักค่าสูญเสีย 11.5% (charger loss)',
     t3_recommend_title:'แนะนำ — เลือก Amp ที่เหมาะสม',
     th_power:'กำลัง', th_finish:'เสร็จเวลา', th_duration:'ใช้เวลา', th_cost:'ค่าไฟ',
     dest_at:'แบตเมื่อถึงที่หมาย', bat_ok:'✅ แบตพอ', bat_short:'แบตไม่พอ',
@@ -726,7 +726,7 @@ const LANG = {
     curve_note:'Gray = actual curve · Orange = charger cap · Blue = selected SOC range',
     t3_settings_title:'AC Charging Settings',
     soc_current_label:'Current SOC', elec_rate_label:'Electricity Rate',
-    t3_note:'Charge to 100% · 10% charger loss applied',
+    t3_note:'Charge to 100% · 11.5% charger loss applied',
     t3_recommend_title:'Recommendation — Choose Amp',
     th_power:'Power', th_finish:'Finish', th_duration:'Duration', th_cost:'Cost',
     dest_at:'Battery at Destination', bat_ok:'✅ Sufficient', bat_short:'Insufficient',
@@ -1158,7 +1158,7 @@ updateTab2();
 // TAB 3 — AC CHARGING
 // ══════════════════════════════════
 function calcACPower(amp) {
-  return amp * 220 * 0.90 / 1000; // kW after 10% loss
+  return amp * 220 * 0.885 / 1000; // kW after 11.5% loss
 }
 
 function calcACCharge(socStart, socEnd, amp) {
