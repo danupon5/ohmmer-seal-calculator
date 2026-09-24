@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Seal — EV Calc</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>:root{color-scheme:dark;--bg:#101614;--surface:#18211d;--surface2:#222e27;--border:#33453a;--accent:#c6ee83;--accent2:#c6ee83;--accent3:#a9cadb;--warn:#f3cf85;--text:#f0f5ef;--text-dim:#a2b3a6;--text-mid:#c1cec3;--tab-h:76px;--font:'Sarabun',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.5;min-height:100dvh}
+button,input{font:inherit}button{cursor:pointer;touch-action:manipulation}button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:4px}button{ -webkit-tap-highlight-color:transparent}
+header{max-width:980px;margin:auto;padding:18px 20px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.logo-badge{font-size:11px;letter-spacing:1px;border:1px solid var(--border);border-radius:7px;padding:5px 7px;color:var(--text-mid)}
+header h1{font-size:19px;letter-spacing:2px;font-weight:600}.brand-sub{display:block;font-size:11px;letter-spacing:1px;color:var(--text-dim);font-weight:400}
+.header-tools{margin-left:auto;display:flex;align-items:center;gap:10px}#clock{font-size:12px;font-variant-numeric:tabular-nums;color:var(--text-dim)}#lang-btn{height:44px;min-width:44px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:13px}
+main{max-width:980px;margin:auto;padding:22px 16px calc(var(--tab-h) + env(safe-area-inset-bottom) + 24px)}
+.tab-content{display:none}.tab-content.active{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}.page-heading{margin:0 4px 3px}.page-heading h2{font-size:24px;font-weight:500}.page-heading p{font-size:13px;color:var(--text-dim);margin-top:3px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:19px;min-width:0}.card-title{font-size:14px;font-weight:500;color:var(--text-mid);margin-bottom:16px;letter-spacing:0}
+.hero-card{background:transparent;border:0;padding:12px 8px 23px;border-bottom:1px solid var(--border);border-radius:0}.big-result{text-align:center;padding:0}.big-num{font-family:var(--font);font-size:clamp(64px,17vw,88px);font-weight:500;line-height:1.15;color:var(--accent);letter-spacing:-3px;font-variant-numeric:tabular-nums}.big-unit{font-size:15px;color:var(--text-mid);margin-top:5px}.hero-label{text-align:center;font-size:13px;color:var(--text-dim);margin-bottom:8px}
+.slider-row{margin-bottom:20px}.slider-row:last-child{margin-bottom:0}.slider-label{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:7px;flex-wrap:wrap}.slider-label>span:first-child,.slider-label>label{font-size:14px;color:var(--text-mid)}.slider-val{font-size:17px;font-variant-numeric:tabular-nums;color:var(--text)}
+.number-field{display:inline-flex;align-items:center;gap:7px;margin-left:auto;white-space:nowrap}.number-field input{width:70px;min-height:44px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text);font-size:18px;text-align:center;padding:7px 4px;appearance:textfield;font-variant-numeric:tabular-nums}.number-field input::-webkit-inner-spin-button{appearance:none}.number-unit{font-size:12px;color:var(--text-dim)}
+input[type=range]{width:100%;height:32px;appearance:none;background:transparent;cursor:pointer;accent-color:var(--accent);display:block}input[type=range]::-webkit-slider-runnable-track{height:5px;background:var(--border);border-radius:3px}input[type=range]::-moz-range-track{height:5px;background:var(--border);border-radius:3px}input[type=range]::-webkit-slider-thumb{appearance:none;width:23px;height:23px;margin-top:-9px;background:var(--accent);border:4px solid var(--surface);outline:1px solid var(--accent);border-radius:50%}input[type=range]::-moz-range-thumb{width:17px;height:17px;background:var(--accent);border:3px solid var(--surface);outline:1px solid var(--accent);border-radius:50%}
+.bat-bar-wrap{height:6px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:5px}.bat-bar-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .15s}.bat-source{display:inline-block;font-size:12px;color:var(--text-dim);margin-top:8px}.bat-source.live{color:var(--accent)}
+.seg-row{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 17px}.seg-pill{flex:1;min-width:55px;min-height:44px;border:1px solid var(--border);border-radius:10px;background:var(--surface2);font-size:13px;color:var(--text-mid);padding:8px 6px}.seg-pill.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:14px;font-variant-numeric:tabular-nums}th,td{text-align:right;padding:11px 5px;border-bottom:1px solid var(--border);vertical-align:middle;overflow-wrap:anywhere}th{font-size:12px;font-weight:400;color:var(--text-dim)}td{color:var(--text-mid)}th:first-child,td:first-child{text-align:left}tr.highlight td{color:var(--accent);background:var(--surface2)}#t1-table th:first-child{width:60%}
+.out-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.out-box{min-width:0}.out-label{font-size:12px;color:var(--text-dim);margin-bottom:6px}.out-val{font-size:17px;color:var(--text);font-variant-numeric:tabular-nums}.dc-summary .out-grid{grid-template-columns:1fr 1fr}.dc-summary .out-box:first-child{grid-column:1/-1;text-align:center;padding:0 0 20px}.dc-summary #t2-time{font-size:clamp(38px,10vw,54px);line-height:1.2;color:var(--accent)}.dc-summary .out-box:not(:first-child){border-top:1px solid var(--border);padding-top:14px;text-align:center}.dc-summary .out-val{font-size:22px}
+.btn-confirm{width:100%;min-height:52px;padding:13px;border:0;border-radius:12px;background:var(--accent);color:var(--bg);font-size:16px;font-weight:600}.btn-confirm.started{background:var(--surface2);border:1px solid var(--border);color:var(--text)}
+.finish-box{display:none;margin-top:18px;padding-top:16px;border-top:1px solid var(--border);text-align:center}.finish-box.show{display:block}.finish-label{font-size:13px;color:var(--text-dim);margin-bottom:7px}.finish-time{font-size:58px;line-height:1.2;color:var(--accent);font-variant-numeric:tabular-nums}.finish-sub{font-size:13px;color:var(--text-mid)}#t2-countdown{font-size:32px!important;color:var(--warn);font-variant-numeric:tabular-nums;text-shadow:none!important}
+.note{font-size:12px;line-height:1.7;color:var(--text-dim);margin-top:9px}.divider{border:0;border-top:1px solid var(--border);margin:14px 0}.destination-output{background:var(--surface2);padding:17px;border-radius:12px;text-align:center}.destination-output.warning{background:#35281e}.destination-title{font-size:13px;color:var(--text-mid)}.destination-value{font-size:48px;color:var(--accent);line-height:1.2;font-variant-numeric:tabular-nums;margin:8px 0}.destination-value.low{color:var(--warn)}.destination-value.short{color:#ffb4a5}.destination-detail{font-size:12px;color:var(--text-mid);line-height:1.8}
+.curve-tap-hint{display:none}.curve-expand{background:var(--surface2);border:1px solid var(--border);border-radius:9px;min-height:44px;color:var(--text);font-size:13px;padding:9px 12px;margin-top:10px;width:100%}#curveCanvas{display:block;width:100%;height:180px;cursor:zoom-in}.curve-modal-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:1000;flex-direction:column;height:100dvh}.curve-modal-overlay.show{display:flex}.curve-modal-header{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0}.curve-modal-header-title{font-size:15px;flex:1;min-width:0}.curve-modal-close{width:44px;height:44px;flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:24px}.curve-modal-stats{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;flex-shrink:0}.curve-modal-stat{background:var(--surface);border-radius:8px;padding:8px 10px;flex:1;min-width:76px;text-align:center;font-size:14px;font-variant-numeric:tabular-nums}.curve-modal-stat>span:first-child{display:block;font-size:11px;color:var(--text-dim);margin-bottom:4px}.curve-modal-canvas-wrap{flex:1;min-height:0;position:relative;overflow:hidden;padding:0 16px 12px}#curveCanvasZoom{display:block;width:100%;height:100%}.curve-tooltip{position:absolute;display:none;pointer-events:none;z-index:10;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;white-space:nowrap}.curve-legend{display:flex;flex-wrap:wrap;gap:8px 16px;padding:0 16px max(12px,env(safe-area-inset-bottom));flex-shrink:0}.curve-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-mid)}.curve-legend-line{width:18px;height:2px}.curve-legend-dash{width:18px;border-top:2px dashed}
+#t3-table th,#t3-table td{padding:10px 2px}#t3-table th{font-size:11px}#t3-table td{font-size:12px!important;font-family:var(--font)!important}#t3-table th:nth-child(1){width:13%}#t3-table th:nth-child(2){width:17%}#t3-table th:nth-child(3){width:24%}#t3-table th:nth-child(4){width:28%}#t3-table th:nth-child(5){width:18%}#t3-table tr:nth-child(even) td{font-size:11px!important;padding:0 2px 10px!important;color:var(--text-dim)!important}.day-offset{display:block;font-size:11px;color:var(--warn)}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:#141d18;border-top:1px solid var(--border);display:flex;justify-content:center;padding:8px 8px max(8px,env(safe-area-inset-bottom));min-height:var(--tab-h)}nav button{flex:1;max-width:220px;min-height:56px;border:0;border-radius:12px;background:none;color:var(--text-dim);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;font-size:12px}nav button.active{background:var(--surface2);color:var(--accent)}.nav-icon{display:flex;align-items:center;justify-content:center;height:21px}.nav-icon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(min-width:760px){main{padding:24px 24px calc(var(--tab-h) + 30px)}.tab-content.active{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.page-heading,.hero-card,.full-width{grid-column:1/-1}.hero-card{padding-bottom:26px}.dc-summary .out-grid{max-width:540px;margin:auto}.card{padding:22px}}
+@media(max-width:359px){header{padding:14px 13px;gap:7px}header h1{font-size:17px}.header-tools{gap:6px}#clock{font-size:11px}.logo-badge{display:none}main{padding-left:10px;padding-right:10px}.card{padding:14px}.number-field input{width:60px}.slider-label{gap:7px}.number-unit{font-size:11px}#t3-table td{font-size:11px!important}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+<meta content="#101614" name="theme-color"/></head>
+<body>
+<header>
+<span class="logo-badge">BYD</span>
+<h1>SEAL<span class="brand-sub">EV CALCULATOR</span></h1>
+
+
+<div class="header-tools"><span id="clock">--:--:--</span><button aria-label="Switch language / เปลี่ยนภาษา" id="lang-btn" onclick="toggleLang()" type="button">TH</button></div></header>
+<main>
+<!-- ══ TAB 1: ระยะทาง ══ -->
+<div aria-labelledby="nav-tab1" class="tab-content active" id="tab1" role="tabpanel"><div class="page-heading"><h2 data-i18n="page_range">ระยะทางของคุณ</h2><p data-i18n="range_sub">BYD Seal AWD · แบตเตอรี่ 82.56 kWh</p></div><div class="card hero-card"><p class="hero-label" data-i18n="range_estimate">ระยะทางโดยประมาณ</p>
+<div class="big-result">
+<div class="big-num" id="t1-range">—</div>
+<div class="big-unit" data-i18n="km_unit">กิโลเมตร</div>
+</div>
+
+</div>
+<div class="card">
+<div class="card-title" data-i18n="t1_bat_title">แบตเตอรี่ปัจจุบัน</div>
+<div class="slider-row">
+<div class="slider-label">
+<label data-i18n="soc_label" for="t1-soc-number">แบตเตอรี่ปัจจุบัน</label>
+<span aria-hidden="true" class="slider-val sr-only" id="t1-soc-val">70%</span><span class="number-field"><input autocomplete="off" data-range="t1-soc" id="t1-soc-number" inputmode="decimal" max="100" min="0" step="1" type="number" value="70"/><span class="number-unit">%</span></span>
+</div>
+<input aria-label="State of Charge" class="green" data-label-key="soc_label" id="t1-soc" max="100" min="0" type="range" value="70"/>
+<div class="bat-bar-wrap">
+<div class="bat-bar-fill" id="t1-bat-bar"></div>
+</div>
+<span class="bat-source manual" data-i18n="manual_label" id="t1-bat-source">ข้อมูลแบตเตอรี่: กรอกเอง</span>
+</div>
+<div class="slider-row">
+<div class="slider-label">
+<label data-i18n="cons_label" for="t1-cons-number">อัตราการใช้พลังงาน</label>
+<span aria-hidden="true" class="slider-val sr-only" id="t1-cons-val">20 kWh/100km</span><span class="number-field"><input autocomplete="off" data-range="t1-cons" id="t1-cons-number" inputmode="decimal" max="24" min="10" step="1" type="number" value="20"/><span class="number-unit">kWh/100km</span></span> </div>
+<input aria-label="Consumption" data-label-key="cons_label" id="t1-cons" max="24" min="10" step="1" type="range" value="20"/>
+</div></div>
+
+
+
+<div class="card">
+<div class="card-title" data-i18n="t1_dest_title">จุดหมาย</div>
+<div class="seg-row" id="t1-dest-presets">
+<button class="seg-pill" data-km="50" type="button">50 <span data-i18n="km_short">กม.</span></button>
+<button class="seg-pill" data-km="100" type="button">100 <span data-i18n="km_short">กม.</span></button>
+<button class="seg-pill" data-km="150" type="button">150 <span data-i18n="km_short">กม.</span></button>
+<button class="seg-pill" data-km="200" type="button">200 <span data-i18n="km_short">กม.</span></button>
+</div>
+<div class="slider-row">
+<div class="slider-label">
+<label data-i18n="distance_label" for="t1-dest-number">ระยะทาง</label>
+<span aria-hidden="true" class="slider-val sr-only" id="t1-dest-val">100 <span data-i18n="km_short">กม.</span></span><span class="number-field"><input autocomplete="off" data-range="t1-dest" id="t1-dest-number" inputmode="decimal" max="500" min="0" step="5" type="number" value="100"/><span class="number-unit" data-i18n="km_short">กม.</span></span>
+</div>
+<input aria-label="ระยะทาง" data-label-key="distance_label" id="t1-dest" max="500" min="0" step="5" type="range" value="100"/>
+</div>
+<div aria-live="polite" id="t1-dest-result"></div>
+</div>
+<div class="card">
+<div class="card-title">SOC <span id="t1-soc-ref">70</span>% — <span data-i18n="t1_table_title">ตารางเปรียบเทียบ</span></div>
+<table id="t1-table">
+<thead>
+<tr>
+<th data-i18n="th_cons">อัตราใช้พลังงาน</th>
+<th data-i18n="th_range">ระยะทาง</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div></div>
+<!-- ══ TAB 2: DC Charge ══ -->
+<div aria-labelledby="nav-tab2" class="tab-content" id="tab2" role="tabpanel"><div class="page-heading"><h2 data-i18n="page_dc">วางแผนชาร์จ DC</h2><p data-i18n="dc_sub">คำนวณเวลาและติดตามเวลาชาร์จ</p></div><div class="card hero-card dc-summary">
+<div class="out-grid">
+<div class="out-box">
+<div class="out-label" data-i18n="time_label">เวลา</div>
+<div aria-live="polite" class="out-val" id="t2-time">—</div>
+</div>
+<div class="out-box">
+<div class="out-label" data-i18n="energy_label">พลังงาน</div>
+<div class="out-val green" id="t2-kwh">—</div>
+</div>
+<div class="out-box">
+<div class="out-label" data-i18n="avg_label">เฉลี่ย</div>
+<div class="out-val orange" id="t2-avg">—</div>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-title" data-i18n="t2_settings_title">ตั้งค่าการชาร์จ DC</div>
+<div class="slider-row">
+<div class="slider-label">
+<label data-i18n="soc_start_label" for="t2-start-number">SOC เริ่มต้น</label>
+<span aria-hidden="true" class="slider-val sr-only" id="t2-start-val">25%</span><span class="number-field"><input autocomplete="off" data-range="t2-start" id="t2-start-number" inputmode="decimal" max="99" min="0" step="1" type="number" value="25"/><span class="number-unit">%</span></span>
+</div>
+<input aria-label="SOC เริ่มต้น" data-label-key="soc_start_label" id="t2-start" max="99" min="0" type="range" value="25"/>
+<span class="bat-source manual" data-i18n="manual_label" id="t2-bat-source">ข้อมูลแบตเตอรี่: กรอกเอง</span>
+</div>
+<div class="slider-row">
+<div class="slider-label">
+<label data-i18n="soc_target_label" for="t2-end-number">SOC เป้าหมาย</label>
+<span aria-hidden="true" class="slider-val sr-only" id="t2-end-val">85%</span><span class="number-field"><input autocomplete="off" data-range="t2-end" id="t2-end-number" inputmode="decimal" max="100" min="1" step="1" type="number" value="85"/><span class="number-unit">%</span></span>
+</div>
+<input aria-label="SOC เป้าหมาย" class="green" data-label-key="soc_target_label" id="t2-end" max="100" min="1" type="range" value="85"/>
+</div>
+<div class="slider-row">
+<div class="slider-label">
+<label data-i18n="charger_label" for="t2-charger-number">กำลัง Charger</label>
+<span aria-hidden="true" class="slider-val sr-only" id="t2-charger-val">120 kW</span><span class="number-field"><input autocomplete="off" data-range="t2-charger" id="t2-charger-number" inputmode="decimal" max="150" min="30" step="10" type="number" value="120"/><span class="number-unit">kW</span></span>
+</div>
+<input aria-label="กำลัง Charger" class="orange" data-label-key="charger_label" id="t2-charger" max="150" min="30" step="10" type="range" value="120"/>
+</div>
+</div>
+
+<div class="card session-card">
+<div class="card-title" data-i18n="session_title">ติดตามเวลาชาร์จ</div>
+<button class="btn-confirm" data-i18n-btn="confirm_btn" id="t2-start-btn" onclick="confirmDCStart()" type="button">เริ่มนับเวลาชาร์จ</button>
+<div class="finish-box" id="t2-finish-box">
+<div class="finish-label" data-i18n="finish_at_label">คาดว่าจะเสร็จเวลา</div>
+<div class="finish-time" id="t2-finish-time">—</div>
+<div class="finish-sub" id="t2-finish-sub">—</div>
+<div>
+<div class="finish-label" data-i18n="remaining_label">เหลืออีก</div>
+<div id="t2-countdown">—</div>
+</div>
+</div>
+</div>
+<div class="card full-width">
+<div class="card-title">Charging Curve — BYD Seal AWD</div>
+<canvas aria-label="DC charging power by battery state of charge" height="180" id="curveCanvas" onclick="openCurveZoom()" role="img" width="560"></canvas><button class="curve-expand" data-i18n="expand_curve" onclick="openCurveZoom()" type="button">ขยายกราฟเต็มจอ</button>
+<p class="curve-tap-hint">🔍 แตะเพื่อขยาย</p>
+<p class="note" data-i18n="curve_note">เขียว = กำลังที่ใช้คำนวณ · เทา = กราฟของรถ · ฟ้า = กำลังตู้ · พื้นหลัง = ช่วง SOC ที่เลือก</p>
+</div>
+</div>
+<!-- ══ CURVE ZOOM MODAL ══ -->
+<div aria-hidden="true" aria-label="Charging curve" aria-modal="true" class="curve-modal-overlay" id="curveModal" role="dialog">
+<div class="curve-modal-header">
+<div class="curve-modal-header-title">⚡ Charging Curve — BYD Seal AWD</div>
+<button aria-label="Close / ปิดกราฟ" class="curve-modal-close" onclick="closeCurveZoom()" type="button">✕</button>
+</div>
+<div class="curve-modal-stats">
+<div class="curve-modal-stat"><span data-i18n="soc_start_label">SOC เริ่มต้น</span><span id="zm-start">—</span></div>
+<div class="curve-modal-stat"><span data-i18n="soc_target_label">SOC เป้าหมาย</span><span id="zm-end">—</span></div>
+<div class="curve-modal-stat"><span data-i18n="charger_label">กำลัง Charger</span><span id="zm-charger">—</span></div>
+<div class="curve-modal-stat"><span data-i18n="time_label">เวลา</span><span id="zm-time">—</span></div>
+<div class="curve-modal-stat"><span data-i18n="avg_label">เฉลี่ย</span><span id="zm-avg">—</span></div>
+</div>
+<div class="curve-modal-canvas-wrap" id="curveZoomWrap">
+<canvas aria-label="Expanded charging curve, SOC versus kW" id="curveCanvasZoom" role="img"></canvas>
+<div class="curve-tooltip" id="curveTooltip"></div>
+</div>
+<div class="curve-legend">
+<div class="curve-legend-item"><div class="curve-legend-line" style="background:#c6ee83"></div><span data-i18n="legend_effective">กำลังที่ใช้คำนวณ</span></div>
+<div class="curve-legend-item"><div class="curve-legend-line" style="background:#82978b"></div><span data-i18n="legend_car">กราฟกำลังของรถ</span></div>
+<div class="curve-legend-item"><div class="curve-legend-dash" style="border-color:#a9cadb"></div><span data-i18n="legend_cap">กำลังสูงสุดของตู้</span></div>
+<div class="curve-legend-item"><div class="curve-legend-line" style="background:#f3cf85"></div><span data-i18n="legend_start">SOC เริ่มต้น</span></div>
+<div class="curve-legend-item"><div class="curve-legend-line" style="background:#c6ee83"></div><span data-i18n="legend_target">SOC เป้าหมาย</span></div>
+</div>
+</div>
+<!-- ══ TAB 3: AC Charge ══ -->
+<div aria-labelledby="nav-tab3" class="tab-content" id="tab3" role="tabpanel"><div class="page-heading"><h2 data-i18n="page_ac">วางแผนชาร์จ AC</h2><p data-i18n="ac_sub">เปรียบเทียบกระแสชาร์จและเวลาเสร็จ</p></div>
+<div class="card">
+<div class="card-title" data-i18n="t3_settings_title">ตั้งค่าการชาร์จ AC</div>
+<div class="slider-row">
+<div class="slider-label">
+<label data-i18n="soc_current_label" for="t3-soc-number">SOC ปัจจุบัน</label>
+<span aria-hidden="true" class="slider-val sr-only" id="t3-soc-val">25%</span><span class="number-field"><input autocomplete="off" data-range="t3-soc" id="t3-soc-number" inputmode="decimal" max="99" min="0" step="1" type="number" value="25"/><span class="number-unit">%</span></span>
+</div>
+<input aria-label="SOC ปัจจุบัน" class="green" data-label-key="soc_current_label" id="t3-soc" max="99" min="0" type="range" value="25"/>
+<div class="bat-bar-wrap">
+<div class="bat-bar-fill" id="t3-bat-bar"></div>
+</div>
+<span class="bat-source manual" data-i18n="manual_label" id="t3-bat-source">ข้อมูลแบตเตอรี่: กรอกเอง</span>
+</div>
+<div class="slider-row">
+<div class="slider-label">
+<label data-i18n="elec_rate_label" for="t3-rate-number">ค่าไฟ</label>
+<span aria-hidden="true" class="slider-val sr-only" id="t3-rate-val">9 ฿/หน่วย</span><span class="number-field"><input autocomplete="off" data-range="t3-rate" id="t3-rate-number" inputmode="decimal" max="14" min="8" step="1" type="number" value="9"/><span class="number-unit" data-i18n="baht_unit">฿/หน่วย</span></span>
+</div>
+<input aria-label="ค่าไฟ" class="yellow" data-label-key="elec_rate_label" id="t3-rate" max="14" min="8" step="1" type="range" value="9"/>
+</div>
+<p class="note" data-i18n="t3_note">ชาร์จจนเต็ม 100% · หักค่าสูญเสีย 11.5% (charger loss)</p>
+</div>
+<div class="card ac-table-card">
+<div class="card-title" data-i18n="t3_recommend_title">แนะนำ — เลือก Amp ที่เหมาะสม</div>
+<table id="t3-table">
+<thead>
+<tr>
+<th>Amp</th>
+<th data-i18n="th_power">กำลัง</th>
+<th data-i18n="th_finish">เสร็จเวลา</th>
+<th data-i18n="th_duration">ใช้เวลา</th>
+<th data-i18n="th_cost">ค่าไฟ</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<p class="note" id="t3-start-note"></p>
+</div>
+</div>
+</main>
+<!-- BOTTOM NAV -->
+<nav aria-label="Calculators" role="tablist">
+<button aria-controls="tab1" aria-selected="true" class="active" id="nav-tab1" onclick="switchTab(1,this)" role="tab" type="button">
+<span class="nav-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M4 20l5-16m6 0l5 16M12 5v3m0 3v3m0 3v3"></path></svg></span><span data-i18n="nav_range">ระยะทาง</span>
+</button>
+<button aria-controls="tab2" aria-selected="false" id="nav-tab2" onclick="switchTab(2,this)" role="tab" type="button">
+<span class="nav-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 10-13h-7z"></path></svg></span><span data-i18n="nav_dc">DC ชาร์จ</span>
+</button>
+<button aria-controls="tab3" aria-selected="false" id="nav-tab3" onclick="switchTab(3,this)" role="tab" type="button">
+<span class="nav-icon"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M8 3v5m8-5v5M6 8h12v3a6 6 0 01-12 0zM12 17v5"></path></svg></span><span data-i18n="nav_ac">AC ชาร์จ</span>
+</button>
+</nav>
+<script>
+// ══ i18n ══
+const LANG = {
+  th: {
+"page_range":"ระยะทางของคุณ","range_sub":"BYD Seal AWD · แบตเตอรี่ 82.56 kWh","page_dc":"วางแผนชาร์จ DC","dc_sub":"คำนวณเวลาและติดตามเวลาชาร์จ","page_ac":"วางแผนชาร์จ AC","ac_sub":"เปรียบเทียบกระแสชาร์จและเวลาเสร็จ","range_estimate":"ระยะทางโดยประมาณ","expand_curve":"ขยายกราฟเต็มจอ","session_title":"ติดตามเวลาชาร์จ","legend_effective":"กำลังที่ใช้คำนวณ","legend_car":"กราฟกำลังของรถ","legend_cap":"กำลังสูงสุดของตู้","legend_start":"SOC เริ่มต้น","legend_target":"SOC เป้าหมาย","day_suffix":"วัน","hour_short":"ชม.","minute_short":"นาที",
+
+    nav_range:'ระยะทาง', nav_dc:'DC ชาร์จ', nav_ac:'AC ชาร์จ',
+    t1_bat_title:'แบตเตอรี่ปัจจุบัน', soc_label:'แบตเตอรี่ปัจจุบัน',
+    manual_label:'ข้อมูลแบตเตอรี่: กรอกเอง', live_label:'🔋 จากอุปกรณ์',
+    t1_cons_title:'อัตราการใช้พลังงาน', cons_label:'อัตราการใช้พลังงาน',
+    km_unit:'กิโลเมตร', km_short:'กม.',
+    t1_table_title:'ตารางเปรียบเทียบ',
+    th_cons:'อัตราใช้พลังงาน', th_range:'ระยะทาง',
+    t1_dest_title:'จุดหมาย', distance_label:'ระยะทาง',
+    t2_settings_title:'ตั้งค่าการชาร์จ DC',
+    soc_start_label:'SOC เริ่มต้น', soc_target_label:'SOC เป้าหมาย',
+    charger_label:'กำลัง Charger',
+    time_label:'เวลา', energy_label:'พลังงาน', avg_label:'เฉลี่ย',
+    t2_confirm_title:'ติดตามเวลาชาร์จ',
+    confirm_btn:'เริ่มนับเวลาชาร์จ',
+    charging_btn:'รีเซ็ตการนับเวลา',
+    finish_at_label:'คาดว่าจะเสร็จเวลา', remaining_label:'เหลืออีก',
+    done_label:'✅ ครบเวลาที่ประมาณไว้',
+    curve_note:'เขียว = กำลังที่ใช้คำนวณ · เทา = กราฟของรถ · ฟ้า = กำลังตู้ · พื้นหลัง = ช่วง SOC ที่เลือก',
+    t3_settings_title:'ตั้งค่าการชาร์จ AC',
+    soc_current_label:'SOC ปัจจุบัน', elec_rate_label:'ค่าไฟ',
+    t3_note:'ชาร์จจนเต็ม 100% · หักค่าสูญเสีย 11.5% (charger loss)',
+    t3_recommend_title:'แนะนำ — เลือก Amp ที่เหมาะสม',
+    th_power:'กำลัง', th_finish:'เสร็จเวลา', th_duration:'ใช้เวลา', th_cost:'ค่าไฟ',
+    dest_at:'แบตเมื่อถึงที่หมาย', bat_ok:'แบตเตอรี่เพียงพอ', bat_short:'แบตไม่พอ',
+    remain_km:'เหลือระยะ', used_kwh:'ใช้ไป', lack_km:'ขาดอีก',
+    badge_morning:'✓ เสร็จตอนเช้า', badge_late:'⚡ เสร็จดึก',
+    badge_slow:'⚠ เสร็จสาย', badge_veryslow:'— เสร็จสายมาก',
+    start_note:'เริ่มชาร์จ', start_note2:'น. · ชาร์จจาก',
+    baht_unit:'฿/หน่วย', min_unit:'นาที',
+    dc_start:'เริ่ม', dc_duration:'ใช้เวลา',
+  },
+  en: {
+"page_range":"Your driving range","range_sub":"BYD Seal AWD · 82.56 kWh battery","page_dc":"DC charging","dc_sub":"Estimate and track your charging time","page_ac":"AC charging","ac_sub":"Compare current and finish times","range_estimate":"Estimated driving range","expand_curve":"Expand charging curve","session_title":"Charging timer","legend_effective":"Effective power","legend_car":"Car curve","legend_cap":"Charger cap","legend_start":"Start SOC","legend_target":"Target SOC","day_suffix":"day","hour_short":"h","minute_short":"min",
+
+    nav_range:'Range', nav_dc:'DC Charge', nav_ac:'AC Charge',
+    t1_bat_title:'Current Battery', soc_label:'State of Charge',
+    manual_label:'Battery: manual input', live_label:'🔋 From Device',
+    t1_cons_title:'Energy Consumption', cons_label:'Consumption',
+    km_unit:'Kilometers', km_short:'km',
+    t1_table_title:'Comparison Table',
+    th_cons:'Consumption', th_range:'Range',
+    t1_dest_title:'Destination', distance_label:'Distance',
+    t2_settings_title:'DC Charging Settings',
+    soc_start_label:'SOC Start', soc_target_label:'SOC Target',
+    charger_label:'Charger Power',
+    time_label:'Time', energy_label:'Energy', avg_label:'Avg',
+    t2_confirm_title:'Charging timer',
+    confirm_btn:'Start charging timer',
+    charging_btn:'Reset charging timer',
+    finish_at_label:'Estimated Finish Time', remaining_label:'Remaining',
+    done_label:'✅ Time is up!',
+    curve_note:'Green = effective power · Gray = car curve · Blue = charger cap · Shading = selected SOC range',
+    t3_settings_title:'AC Charging Settings',
+    soc_current_label:'Current SOC', elec_rate_label:'Electricity Rate',
+    t3_note:'Charge to 100% · 11.5% charger loss applied',
+    t3_recommend_title:'Recommendation — Choose Amp',
+    th_power:'Power', th_finish:'Finish', th_duration:'Duration', th_cost:'Cost',
+    dest_at:'Battery at Destination', bat_ok:'Sufficient battery', bat_short:'Insufficient',
+    remain_km:'Range left', used_kwh:'Used', lack_km:'Short by',
+    badge_morning:'✓ Done by morning', badge_late:'⚡ Done at night',
+    badge_slow:'⚠ Done late', badge_veryslow:'— Very late',
+    start_note:'Started at', start_note2:'· Charging from',
+    baht_unit:'฿/unit', min_unit:'min',
+    dc_start:'Started', dc_duration:'Duration',
+  }
+};
+
+let currentLang = 'th';
+
+function toggleLang() {
+  currentLang = currentLang === 'th' ? 'en' : 'th';
+  const btn = document.getElementById('lang-btn');
+  btn.textContent = currentLang === 'th' ? 'TH' : 'EN';
+  btn.style.color = currentLang === 'en' ? 'var(--accent)' : 'var(--text-mid)';
+  btn.style.borderColor = currentLang === 'en' ? 'var(--accent)' : 'var(--border)';
+  applyLang();
+  updateTab1(); updateTab2(); updateTab3();
+  if(dcStartTime) updateDCFinish();
+  document.documentElement.lang = currentLang;
+  syncNumberInputs();
+}
+
+function t(key) { return LANG[currentLang][key] || key; }
+
+function applyLang() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  // bat source badges (live ones)
+  ['t1-bat-source','t2-bat-source','t3-bat-source'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el.classList.contains('live')) el.textContent = t('live_label');
+    else el.textContent = t('manual_label');
+  });
+  // confirm button state
+  const btn = document.getElementById('t2-start-btn');
+  if(dcStartTime) btn.textContent = t('charging_btn');
+  else btn.textContent = t('confirm_btn');
+}
+
+// ══ CHARGING CURVE DATA ══
+const CURVE = [
+  60,70,80,90,100,110,111,114,114,120, // 0-9
+  142,144,145,146,147,147,150,150,150,150, // 10-19
+  151,151,151,151,150,151,150,150,150,150, // 20-29
+  150,150,149,149,149,149,148,148,148,148, // 30-39
+  148,147,147,147,144,104,98,99,92,86, // 40-49
+  86,88,88,88,88,88,88,88,88,88, // 50-59
+  88,88,88,83,61,62,64,65,69,70, // 60-69
+  70,71,75,78,78,80,80,80,80,80, // 70-79
+  80,80,80,80,80,42,44,44,44,44, // 80-89
+  44,44,44,44,45,45,45,46,46,19,19 // 90-100
+];
+const BATTERY_KWH = 82.56;
+
+// ══ CLOCK ══
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Mark as manual when user touches slider
+['t1-soc','t2-start','t3-soc'].forEach(id => {
+  document.getElementById(id).addEventListener('input', function() {
+    const map = {'t1-soc':'t1-bat-source','t2-start':'t2-bat-source','t3-soc':'t3-bat-source'};
+    const el = document.getElementById(map[id]);
+    el.textContent = t('manual_label');
+    el.className = 'bat-source manual';
+  });
+});
+
+// ══ DC CONFIRM START ══
+let dcStartTime = null;
+let dcTotalMs = 0;
+let dcCountdownInterval = null;
+
+function confirmDCStart() {
+  // toggle reset
+  if(dcStartTime) {
+    dcStartTime = null;
+    dcTotalMs = 0;
+    clearInterval(dcCountdownInterval);
+    const btn = document.getElementById('t2-start-btn');
+    btn.textContent = t('confirm_btn');
+    btn.classList.remove('started');
+    document.getElementById('t2-finish-box').classList.remove('show');
+    document.getElementById('t2-countdown').textContent = '—';
+    return;
+  }
+
+  dcStartTime = new Date();
+  const btn = document.getElementById('t2-start-btn');
+  btn.textContent = t('charging_btn');
+  btn.classList.add('started');
+
+  updateDCFinish();
+
+  // countdown every second
+  if(dcCountdownInterval) clearInterval(dcCountdownInterval);
+  dcCountdownInterval = setInterval(() => {
+    if(!dcStartTime) return;
+    const elapsed = (Date.now() - dcStartTime.getTime()) / 1000;
+    const remaining = (dcTotalMs / 1000) - elapsed;
+    const cd = document.getElementById('t2-countdown');
+    if(remaining <= 0) {
+      cd.textContent = t('done_label');
+      cd.style.color = 'var(--accent2)';
+      cd.style.fontSize = '20px';
+      clearInterval(dcCountdownInterval);
+    } else {
+      const h = Math.floor(remaining / 3600);
+      const m = Math.floor((remaining % 3600) / 60);
+      const s = Math.floor(remaining % 60);
+      cd.style.fontSize = '36px';
+      cd.style.color = remaining < 300 ? 'var(--accent2)' : 'var(--warn)';
+      cd.textContent = (h > 0 ? h + 'h ' : '') +
+        m.toString().padStart(2,'0') + 'm ' +
+        s.toString().padStart(2,'0') + 's';
+    }
+  }, 1000);
+}
+
+function updateDCFinish() {
+  if(!dcStartTime) return;
+  const start = +document.getElementById('t2-start').value;
+  const end = +document.getElementById('t2-end').value;
+  const charger = +document.getElementById('t2-charger').value;
+  const result = calcDCCharge(start, end, charger);
+  dcTotalMs = result.minutes * 60000;
+  const finishTime = new Date(dcStartTime.getTime() + dcTotalMs);
+
+  document.getElementById('t2-finish-box').classList.add('show');
+  document.getElementById('t2-finish-time').textContent = fmt24(finishTime);
+  document.getElementById('t2-finish-sub').textContent =
+    t('dc_start') + ' ' + fmt24(dcStartTime) + ' · ' + t('dc_duration') + ' ' + fmtTime(result.minutes) +
+    ' · ' + start + '% → ' + end + '%';
+}
+
+// reset confirm if slider changes
+['t2-start','t2-end','t2-charger'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    if(dcStartTime) updateDCFinish();
+  });
+});
+function switchTab(n, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab'+n).classList.add('active');
+  btn.classList.add('active');
+  document.querySelectorAll('nav button').forEach(b => b.setAttribute('aria-selected', b === btn));
+  if(n===2) drawCurve();
+  if(n===3) renderGantt();
+}
+
+// ══════════════════════════════════
+// TAB 1 — RANGE CALCULATOR
+// ══════════════════════════════════
+const PRESET_CONS = [10,12,14,16,18,20,22,24];
+
+function calcRange(socPct, consKwh) {
+  const energy = (socPct / 100) * BATTERY_KWH;
+  return (energy / consKwh) * 100;
+}
+
+function updateTab1() {
+  const soc = +document.getElementById('t1-soc').value;
+  const cons = +document.getElementById('t1-cons').value;
+
+  document.getElementById('t1-soc-val').textContent = soc + '%';
+  document.getElementById('t1-cons-val').textContent = cons + ' kWh/100km';
+  document.getElementById('t1-soc-ref').textContent = soc;
+
+  const batBar = document.getElementById('t1-bat-bar');
+  batBar.style.width = soc + '%';
+  batBar.style.background = soc > 50
+    ? 'linear-gradient(90deg,#c6ee83,#c6ee83)'
+    : soc > 20
+    ? 'linear-gradient(90deg,#f3cf85,#ff9d00)'
+    : 'linear-gradient(90deg,#ff4444,#a9cadb)';
+
+  const range = calcRange(soc, cons);
+  document.getElementById('t1-range').textContent = Math.round(range);
+
+  // table
+  const tbody = document.querySelector('#t1-table tbody');
+  tbody.innerHTML = '';
+  PRESET_CONS.forEach(c => {
+    const r = calcRange(soc, c);
+    const tr = document.createElement('tr');
+    if(c === cons) tr.classList.add('highlight');
+    tr.innerHTML = `<td>${c} kWh/100km</td><td>${Math.round(r)} km</td>`;
+    tbody.appendChild(tr);
+  });
+
+  // destination
+  updateDestination();
+}
+
+function updateDestination() {
+  const soc = +document.getElementById('t1-soc').value;
+  const cons = +document.getElementById('t1-cons').value;
+  const dest = +document.getElementById('t1-dest').value;
+  document.getElementById('t1-dest-val').textContent = dest + ' ' + t('km_short');
+
+  const maxRange = calcRange(soc, cons);
+  const usedKwh = (dest / 100) * cons;
+  const usedSocPct = (usedKwh / BATTERY_KWH) * 100;
+  const remainSoc = soc - usedSocPct;
+  const remainKm = maxRange - dest;
+  const el = document.getElementById('t1-dest-result');
+
+  if(dest === 0) { el.innerHTML = ''; return; }
+
+  if(remainSoc >= 0) {
+    const color = remainSoc > 20 ? 'var(--accent2)' : 'var(--warn)';
+    el.innerHTML = `
+      <div class="destination-output">
+        <div class="destination-title">${t('dest_at')}</div>
+        <div class="destination-value ${remainSoc <= 20 ? 'low' : ''}">${Math.round(remainSoc)}%</div>
+        <div class="destination-detail">${t('bat_ok')} · ${t('remain_km')} ${Math.round(remainKm)} ${t('km_short')}<br>${t('used_kwh')} ${usedKwh.toFixed(1)} kWh</div>
+      </div>`;
+  } else {
+    const shortage = Math.abs(remainKm);
+    el.innerHTML = `<div class="destination-output warning">
+      <div class="destination-title">${t('bat_short')}</div>
+      <div class="destination-value short">−${Math.round(shortage)} ${t('km_short')}</div>
+      <div class="destination-detail">${t('lack_km')} ${Math.round(shortage)} ${t('km_short')}<br>${t('used_kwh')} ${usedKwh.toFixed(1)} kWh</div>
+    </div>`;
+  }
+}
+
+// preset buttons
+document.querySelectorAll('#t1-dest-presets .seg-pill').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('#t1-dest-presets .seg-pill').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('t1-dest').value = this.dataset.km;
+    updateDestination();
+  });
+});
+document.getElementById('t1-dest').addEventListener('input', function() {
+  document.querySelectorAll('#t1-dest-presets .seg-pill').forEach(b => b.classList.remove('active'));
+  updateDestination();
+});
+
+document.getElementById('t1-soc').addEventListener('input', updateTab1);
+document.getElementById('t1-cons').addEventListener('input', updateTab1);
+updateTab1();
+
+// ══════════════════════════════════
+// TAB 2 — DC CHARGING
+// ══════════════════════════════════
+// Time table from curve (seconds from 0%)
+const CURVE_TIME = [
+  0,49,91,129,162,193,222,250,278,305,
+  330,352,374,396,418,440,461,482,504,525,
+  546,567,589,610,631,652,673,695,716,737,
+  759,780,801,823,844,867,889,909,930,952,
+  973,995,1017,1038,1086,1118,1150,1184,1219,1257,
+  1293,1330,1370,1366,1390,1426,1457,1526,1574,1620,
+  1680,1716,1753,1790,1834,1886,1937,1986,2034,2080,
+  2126,2171,2215,2256,2297,2338,2378,2418,2398,2477,
+  2477,2517,2557,2597,2637,2689,2764,2836,2909,2981,
+  3054,3127,3199,3272,3343,3414,3485,3556,3625,3723,3891
+];
+
+function calcDCCharge(startSoc, endSoc, chargerKw) {
+  if(startSoc >= endSoc) return {minutes:0, kwh:0, avgKw:0};
+  let totalSec = 0;
+  let totalKwh = 0;
+  for(let soc = startSoc; soc < endSoc; soc++) {
+    const curveKw = CURVE[soc];
+    const effectiveKw = Math.min(curveKw, chargerKw);
+    // energy for 1% of 82.56 kWh
+    const segKwh = BATTERY_KWH * 0.01;
+    const segSec = (segKwh / effectiveKw) * 3600;
+    totalSec += segSec;
+    totalKwh += segKwh;
+  }
+  return {
+    minutes: totalSec / 60,
+    kwh: totalKwh,
+    avgKw: totalKwh / (totalSec / 3600)
+  };
+}
+
+function fmtTime(minutes) {
+  const m = Math.round(minutes), h = Math.floor(m / 60), mm = m % 60;
+  return h > 0 ? h + ' ' + t('hour_short') + ' ' + mm + ' ' + t('minute_short') : mm + ' ' + t('minute_short');
+}
+
+function fmt24(date) {
+  const h = date.getHours().toString().padStart(2,'0');
+  const m = date.getMinutes().toString().padStart(2,'0');
+  return h + ':' + m;
+}
+
+function updateTab2() {
+  let start = +document.getElementById('t2-start').value;
+  let end = +document.getElementById('t2-end').value;
+  const charger = +document.getElementById('t2-charger').value;
+
+  if(start >= end) {
+    if(start >= 99) end = 100;
+    else end = Math.min(100, start + 1);
+    document.getElementById('t2-start').value = start;
+    document.getElementById('t2-end').value = end;
+  }
+
+  document.getElementById('t2-start-val').textContent = start + '%';
+  document.getElementById('t2-end-val').textContent = end + '%';
+  document.getElementById('t2-charger-val').textContent = charger + ' kW';
+
+  const result = calcDCCharge(start, end, charger);
+  document.getElementById('t2-time').textContent = fmtTime(result.minutes);
+  document.getElementById('t2-kwh').textContent = result.kwh.toFixed(1) + ' kWh';
+  document.getElementById('t2-avg').textContent = Math.round(result.avgKw) + ' kW';
+
+  drawCurve();
+}
+
+function drawCurveOnCanvas(canvas, opts) {
+  const dpr = window.devicePixelRatio || 1;
+  // offsetWidth/Height is reliable once element is in DOM and visible
+  const W = canvas.offsetWidth  || 300;
+  const H = canvas.offsetHeight || 180;
+
+  canvas.width  = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  // don't override style.width/height here — caller already set them
+  // (for small canvas: set by HTML attribute style; for zoom: set by openCurveZoom)
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, W, H);
+
+  const { startSoc, endSoc, chargerKw, isZoom } = opts;
+  const pad = isZoom ? {l:52,r:20,t:28,b:40} : {l:48,r:14,t:12,b:28};
+  const cw = W - pad.l - pad.r;
+  const ch = H - pad.t - pad.b;
+  const maxKw = 160;
+
+  function xPos(soc) { return pad.l + (soc/100)*cw; }
+  function yPos(kw)  { return pad.t + ch - (kw/maxKw)*ch; }
+
+  // store for tooltip
+  if(isZoom) {
+    canvas._drawOpts = { pad, cw, ch, maxKw, startSoc, endSoc, chargerKw };
+  }
+
+  // ── highlighted SOC range ──
+  const grad = ctx.createLinearGradient(xPos(startSoc),0,xPos(endSoc),0);
+  grad.addColorStop(0, 'rgba(198,238,131,0.03)');
+  grad.addColorStop(0.5,'rgba(198,238,131,0.10)');
+  grad.addColorStop(1, 'rgba(198,238,131,0.03)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(xPos(startSoc), pad.t, xPos(endSoc)-xPos(startSoc), ch);
+
+  // ── grid lines & Y labels ──
+  const gridKws = isZoom ? [0,20,40,60,80,100,120,140,160] : [50,100,150];
+  gridKws.forEach(kw => {
+    ctx.save();
+    ctx.strokeStyle = kw===0 ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash(kw===0 ? [] : [3,4]);
+    ctx.beginPath(); ctx.moveTo(pad.l, yPos(kw)); ctx.lineTo(pad.l+cw, yPos(kw)); ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle = '#a2b3a6';
+    ctx.font = `${isZoom?'12':'11'}px Sarabun`;
+    ctx.textAlign = 'right';
+    ctx.fillText(kw+'kW', pad.l-6, yPos(kw)+4);
+  });
+
+  // ── X axis labels ──
+  const xTicks = W < 440 ? [0,25,50,75,100] : [0,10,20,30,40,50,60,70,80,90,100];
+  ctx.fillStyle = '#a2b3a6';
+  ctx.font = `${isZoom?'12':'11'}px Sarabun`;
+  xTicks.forEach(soc => {
+    ctx.textAlign = soc === 100 ? 'right' : soc === 0 ? 'left' : 'center';
+    ctx.fillText(soc+'%', xPos(soc), H - (isZoom?10:6));
+  });
+  ctx.textAlign = 'left';
+
+  // ── charger cap dashed line ──
+  if(chargerKw <= maxKw) {
+    ctx.save();
+    ctx.strokeStyle = '#a9cadb';
+    ctx.lineWidth = isZoom ? 1.5 : 1;
+    ctx.setLineDash([6,4]);
+    ctx.globalAlpha = 0.7;
+    ctx.beginPath(); ctx.moveTo(pad.l, yPos(chargerKw)); ctx.lineTo(pad.l+cw, yPos(chargerKw)); ctx.stroke();
+    ctx.restore();
+    if(isZoom) {
+      ctx.fillStyle = '#a9cadb';
+      ctx.font = '11px Sarabun';
+      ctx.textAlign = 'right';
+      ctx.fillText(chargerKw+' kW cap', pad.l+cw-4, yPos(chargerKw)-6);
+    }
+  }
+
+  // ── actual car curve (grey) ──
+  ctx.save();
+  ctx.strokeStyle = '#82978b';
+  ctx.lineWidth = isZoom ? 2 : 1.5;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  CURVE.forEach((kw,i) => { i===0 ? ctx.moveTo(xPos(i),yPos(kw)) : ctx.lineTo(xPos(i),yPos(kw)); });
+  ctx.stroke();
+  ctx.restore();
+
+  // ── effective curve fill ──
+  if(isZoom) {
+    ctx.save();
+    const fg = ctx.createLinearGradient(pad.l, pad.t, pad.l, pad.t+ch);
+    fg.addColorStop(0,  'rgba(198,238,131,0.18)');
+    fg.addColorStop(1,  'rgba(198,238,131,0.01)');
+    ctx.fillStyle = fg;
+    ctx.beginPath();
+    ctx.moveTo(xPos(0), yPos(0));
+    CURVE.forEach((kw,i) => { ctx.lineTo(xPos(i), yPos(Math.min(kw,chargerKw))); });
+    ctx.lineTo(xPos(100), yPos(0));
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // ── effective curve (cyan) ──
+  ctx.save();
+  ctx.strokeStyle = '#c6ee83';
+  ctx.lineWidth = isZoom ? 2.5 : 2;
+  ctx.lineJoin = 'round';
+  ctx.shadowColor = 'rgba(198,238,131,0.35)';
+  ctx.shadowBlur = 0;
+  ctx.beginPath();
+  CURVE.forEach((kw,i) => {
+    const y = yPos(Math.min(kw,chargerKw));
+    i===0 ? ctx.moveTo(xPos(i),y) : ctx.lineTo(xPos(i),y);
+  });
+  ctx.stroke();
+  ctx.restore();
+
+  // ── SOC marker lines ──
+  [[startSoc,'#f3cf85'],[endSoc,'#c6ee83']].forEach(([soc,color]) => {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = isZoom ? 1.5 : 1;
+    ctx.setLineDash([4,3]);
+    ctx.globalAlpha = 0.8;
+    ctx.beginPath(); ctx.moveTo(xPos(soc),pad.t); ctx.lineTo(xPos(soc),pad.t+ch); ctx.stroke();
+    ctx.restore();
+    if(isZoom) {
+      // SOC label at top
+      ctx.fillStyle = color;
+      ctx.font = 'bold 11px Sarabun';
+      ctx.textAlign = 'center';
+      ctx.fillText(soc+'%', xPos(soc), pad.t-10);
+      // dot on curve
+      const effKw = Math.min(CURVE[soc]||0, chargerKw);
+      ctx.beginPath();
+      ctx.arc(xPos(soc), yPos(effKw), 5, 0, Math.PI*2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.strokeStyle = '#101614';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      // kW label next to dot
+      ctx.fillStyle = color;
+      ctx.font = '11px Sarabun';
+      ctx.textAlign = xPos(soc) > pad.l+cw*0.8 ? 'right' : 'left';
+      const lx = xPos(soc) > pad.l+cw*0.8 ? xPos(soc)-10 : xPos(soc)+10;
+      ctx.fillText(Math.round(effKw)+' kW', lx, yPos(effKw)-8);
+    }
+  });
+  // store draw opts and return for tooltip
+  const drawOpts = { pad, cw, ch, maxKw: 160, startSoc, endSoc, chargerKw };
+  return drawOpts;
+}
+
+function drawCurve() {
+  const canvas = document.getElementById('curveCanvas');
+  if(!canvas) return;
+  const startSoc  = +document.getElementById('t2-start').value;
+  const endSoc    = +document.getElementById('t2-end').value;
+  const chargerKw = +document.getElementById('t2-charger').value;
+  drawCurveOnCanvas(canvas, { startSoc, endSoc, chargerKw, isZoom: false });
+}
+
+function openCurveZoom() {
+  const startSoc  = +document.getElementById('t2-start').value;
+  const endSoc    = +document.getElementById('t2-end').value;
+  const chargerKw = +document.getElementById('t2-charger').value;
+
+  document.getElementById('zm-start').textContent   = startSoc + '%';
+  document.getElementById('zm-end').textContent     = endSoc + '%';
+  document.getElementById('zm-charger').textContent = chargerKw + ' kW';
+  document.getElementById('zm-time').textContent    = document.getElementById('t2-time').textContent;
+  document.getElementById('zm-avg').textContent     = document.getElementById('t2-avg').textContent;
+
+  document.getElementById('curveModal').classList.add('show');
+  document.getElementById('curveModal').setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+  document.querySelector('.curve-modal-close').focus();
+
+  // Use wrap's client dimensions — reliable after modal is shown
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const wrap   = document.getElementById('curveZoomWrap');
+    const canvas = document.getElementById('curveCanvasZoom');
+    const W = wrap.clientWidth  - 32; // subtract padding (16px each side)
+    const H = wrap.clientHeight - 16; // subtract bottom padding
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    const drawOpts = drawCurveOnCanvas(canvas, { startSoc, endSoc, chargerKw, isZoom: true });
+    initZoomTooltip(canvas, drawOpts);
+  }));
+}
+
+function initZoomTooltip(canvas, drawOpts) {
+  const tip = document.getElementById('curveTooltip');
+
+  function onMove(cx, cy) {
+    const rect = canvas.getBoundingClientRect();
+    const mx = cx - rect.left;
+    const my = cy - rect.top;
+    const { pad, cw, chargerKw } = drawOpts;
+    const rawSoc = (mx - pad.l) / cw * 100;
+    if(rawSoc < 0 || rawSoc > 100) { tip.style.display='none'; return; }
+    const soc = Math.round(Math.max(0, Math.min(100, rawSoc)));
+    const carKw = CURVE[soc] || 0;
+    const effKw = Math.min(carKw, chargerKw);
+    tip.innerHTML = `<b style="color:#c6ee83">${soc}%</b>&nbsp;&nbsp;<span style="color:#c6ee83">${Math.round(effKw)} kW</span><span style="color:#a2b3a6"> / ${Math.round(carKw)} kW</span>`;
+    tip.style.display = 'block';
+    const tx = Math.min(mx + 14, rect.width - tip.offsetWidth - 8);
+    const ty = Math.max(my - 36, 4);
+    tip.style.left = tx + 'px';
+    tip.style.top  = ty + 'px';
+  }
+
+  canvas.onmousemove = e => onMove(e.clientX, e.clientY);
+  canvas.onmouseleave = () => { tip.style.display='none'; };
+  canvas.ontouchmove = e => {
+    e.preventDefault();
+    onMove(e.touches[0].clientX, e.touches[0].clientY);
+  };
+  canvas.ontouchstart = e => onMove(e.touches[0].clientX, e.touches[0].clientY);
+  canvas.ontouchend = () => { tip.style.display='none'; };
+}
+
+['t2-start','t2-end','t2-charger'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateTab2);
+});
+updateTab2();
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') closeCurveZoom();
+});
+
+// ══════════════════════════════════
+// TAB 3 — AC CHARGING
+// ══════════════════════════════════
+function calcACPower(amp) {
+  return amp * 220 * 0.885 / 1000; // kW after 11.5% loss
+}
+
+function calcACCharge(socStart, socEnd, amp) {
+  const kw = calcACPower(amp);
+  const neededKwh = ((socEnd - socStart) / 100) * BATTERY_KWH;
+  const hours = neededKwh / kw;
+  return { hours, kwh: neededKwh, kw };
+}
+
+function addHours(date, h) {
+  return new Date(date.getTime() + h * 3600000);
+}
+
+function fmtDuration(hours) { return fmtTime(hours * 60); }
+
+function getBadge(amp, finishHour) {
+  if(finishHour >= 5 && finishHour <= 7) return {text: t('badge_morning'), color:'var(--accent2)'};
+  if(finishHour < 5) return {text: t('badge_late'), color:'var(--accent)'};
+  if(finishHour > 7 && finishHour <= 9) return {text: t('badge_slow'), color:'var(--warn)'};
+  return {text: t('badge_veryslow'), color:'var(--text-dim)'};
+}
+
+function fmt24WithDay(finishDate, startDate) {
+  const time = fmt24(finishDate);
+  const startDay = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+  const finishDay = new Date(finishDate.getFullYear(), finishDate.getMonth(), finishDate.getDate());
+  const dayDiff = Math.round((finishDay - startDay) / 86400000);
+  if(dayDiff <= 0) return time;
+  return `${time}<span class="day-offset">+${dayDiff} ${t('day_suffix')}</span>`;
+}
+
+function updateTab3() {
+  const soc = +document.getElementById('t3-soc').value;
+  const rate = +document.getElementById('t3-rate').value;
+  const now = new Date();
+
+  document.getElementById('t3-soc-val').textContent = soc + '%';
+  document.getElementById('t3-rate-val').textContent = rate + ' ' + t('baht_unit');
+  document.getElementById('t3-start-note').textContent =
+    t('start_note') + ' ' + fmt24(now) + ' · ' + t('start_note2') + ' ' + soc + '% → 100%';
+
+  const batBar = document.getElementById('t3-bat-bar');
+  batBar.style.width = soc + '%';
+  batBar.style.background = soc > 50
+    ? 'linear-gradient(90deg,#c6ee83,#c6ee83)'
+    : soc > 20
+    ? 'linear-gradient(90deg,#f3cf85,#ff9d00)'
+    : 'linear-gradient(90deg,#ff4444,#a9cadb)';
+
+  const AMPS = [8, 10, 13, 16, 32];
+  const tbody = document.querySelector('#t3-table tbody');
+  tbody.innerHTML = '';
+
+  AMPS.forEach(amp => {
+    const res = calcACCharge(soc, 100, amp);
+    const finish = addHours(now, res.hours);
+    const cost = res.kwh * rate;
+    const badge = getBadge(amp, finish.getHours());
+    const kw = calcACPower(amp);
+    const finishDisplay = fmt24WithDay(finish, now);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="text-align:left;font-family:'Sarabun',monospace;color:var(--accent)">${amp}A</td>
+      <td style="font-family:'Sarabun',monospace">${kw.toFixed(1)} kW</td>
+      <td style="font-family:'Sarabun',monospace;color:var(--accent2);font-size:15px">${finishDisplay}</td>
+      <td style="font-family:'Sarabun',monospace">${fmtDuration(res.hours)}</td>
+      <td style="color:var(--warn);font-family:'Sarabun',monospace">${Math.round(cost)}฿</td>
+    `;
+    tbody.appendChild(tr);
+
+    // badge row
+    const tr2 = document.createElement('tr');
+    tr2.innerHTML = `<td colspan="5" style="text-align:left;padding:2px 8px 10px;font-size:11px;color:${badge.color};border-bottom:1px solid var(--border)">${badge.text}</td>`;
+    tbody.appendChild(tr2);
+  });
+
+  renderGantt();
+}
+
+function renderGantt() {
+  if(!document.getElementById('t3-axis') || !document.getElementById('t3-gantt')) return;
+  const soc = +document.getElementById('t3-soc').value;
+  const rate = +document.getElementById('t3-rate').value;
+  const now = new Date();
+  const AMPS = [8, 10, 13, 16];
+  const COLORS = ['#c6ee83','#c6ee83','#f3cf85','#a9cadb'];
+  const SPAN_HOURS = 24;
+
+  // axis
+  const axis = document.getElementById('t3-axis');
+  axis.innerHTML = '';
+  for(let h = 0; h <= SPAN_HOURS; h += 4) {
+    const tick = document.createElement('span');
+    tick.className = 'gantt-tick';
+    const t = new Date(now.getTime() + h*3600000);
+    tick.textContent = t.getHours().toString().padStart(2,'0')+':00';
+    axis.appendChild(tick);
+  }
+
+  const gantt = document.getElementById('t3-gantt');
+  gantt.innerHTML = '';
+
+  AMPS.forEach((amp, i) => {
+    const res = calcACCharge(soc, 100, amp);
+    const widthPct = Math.min(100, (res.hours / SPAN_HOURS) * 100);
+    const finish = addHours(now, res.hours);
+    const cost = res.kwh * rate;
+
+    const row = document.createElement('div');
+    row.className = 'gantt-row';
+    row.innerHTML = `
+      <div class="gantt-label">${amp}A</div>
+      <div class="gantt-bar-wrap">
+        <div class="gantt-bar" style="width:${widthPct}%;background:${COLORS[i]}">
+          ${res.hours < 3 ? fmt24(finish) : ''}
+        </div>
+      </div>
+      <div class="gantt-info">
+        ${fmt24(finish)}<br>
+        <span style="color:var(--warn)">${Math.round(cost)}฿</span>
+      </div>
+    `;
+    gantt.appendChild(row);
+  });
+}
+
+document.getElementById('t3-soc').addEventListener('input', updateTab3);
+document.getElementById('t3-rate').addEventListener('input', updateTab3);
+updateTab3();
+</script>
+<script>// Numeric fields mirror the original ranges; range events remain the source of updates.
+function syncNumberInputs() {
+  document.querySelectorAll('input[data-range]').forEach(field => {
+    const range = document.getElementById(field.dataset.range);
+    if(document.activeElement !== field) field.value = range.value;
+    range.setAttribute('aria-label', t(range.dataset.labelKey));
+  });
+}
+document.querySelectorAll('input[data-range]').forEach(field => {
+  const range = document.getElementById(field.dataset.range);
+  function commit() {
+    if(field.value.trim() === '' || !Number.isFinite(Number(field.value))) {
+      field.value = range.value;
+      return;
+    }
+    const min = Number(range.min), max = Number(range.max), step = Number(range.step || 1);
+    const value = Math.min(max, Math.max(min, min + Math.round((Number(field.value) - min) / step) * step));
+    range.value = value;
+    range.dispatchEvent(new Event('input', {bubbles:true}));
+    field.value = range.value;
+    syncNumberInputs();
+  }
+  field.addEventListener('change', commit);
+  field.addEventListener('keydown', e => { if(e.key === 'Enter') { commit(); field.blur(); } });
+  range.addEventListener('input', () => {
+    syncNumberInputs();
+    if(range.id.startsWith('t2-') && dcStartTime) updateDCFinish();
+  });
+});
+document.querySelectorAll('#t1-dest-presets button').forEach(btn => {
+  btn.addEventListener('click', syncNumberInputs);
+});
+function closeCurveZoom() {
+  const modal = document.getElementById('curveModal');
+  if(!modal.classList.contains('show')) return;
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+  document.getElementById('curveTooltip').style.display = 'none';
+  document.querySelector('.curve-expand').focus();
+}
+document.getElementById('curveModal').addEventListener('keydown', e => {
+  if(e.key === 'Tab') { e.preventDefault(); document.querySelector('.curve-modal-close').focus(); }
+});
+let curveResizeFrame;
+window.addEventListener('resize', () => {
+  cancelAnimationFrame(curveResizeFrame);
+  curveResizeFrame = requestAnimationFrame(() => {
+    if(document.getElementById('tab2').classList.contains('active')) drawCurve();
+    if(document.getElementById('curveModal').classList.contains('show')) openCurveZoom();
+  });
+});
+document.fonts?.ready.then(() => {
+  if(document.getElementById('tab2').classList.contains('active')) drawCurve();
+});
+applyLang();
+syncNumberInputs();
+</script></body>
+</html>
